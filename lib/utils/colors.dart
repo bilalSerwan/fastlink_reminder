@@ -1,0 +1,13 @@
+import 'package:flutter/material.dart';
+Color primaryColor = Colors.lightBlue;
+Color subcolor = Colors.blueGrey;
+Color backgroundColor = Colors.white;
+// Color textColor = Colors.black;
+// Color textColor2 = Colors.white;
+// Color textColor3 = Colors.black;
+// Color textColor4 = Colors.white;
+// Color textColor5 = Colors.black;
+// Color textColor6 = Colors.white;
+// Color textColor7 = Colors.black;
+// Color textColor8 = Colors.white;
+// Color textColor9 = Colors.black;
