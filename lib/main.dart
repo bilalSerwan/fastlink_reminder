@@ -16,7 +16,6 @@ class MyApp extends StatelessWidget {
           MediaQuery.sizeOf(context).width, MediaQuery.sizeOf(context).height),
       minTextAdapt: true,
       splitScreenMode: true,
-      // Use builder only if you need to use library outside ScreenUtilInit context
       builder: (_, child) {
         return const MaterialApp(
           debugShowCheckedModeBanner: false,

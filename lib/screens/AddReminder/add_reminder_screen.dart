@@ -1,7 +1,10 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:fastlink_reminder/model/reminder_date.dart';
+import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
+import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,24 +19,31 @@ class AddReminderScreen extends StatefulWidget {
 class _AddReminderScreenState extends State<AddReminderScreen> {
   final TextEditingController titleController = TextEditingController();
 
-  DateTime? selectedDate;
+  DateTime? selectExpierationDate;
 
   Future<void> pickDate(BuildContext context) async {
-    selectedDate = await showDatePicker(
+    selectExpierationDate = await showDatePicker(
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 3650)),
       initialDate: DateTime.now(),
     );
+    selectexpirationDateHaveError = false;
     setState(() {});
   }
 
-  int numberOfReminders = 1;
+  List<ReminderDate> reminderDates = [
+    ReminderDate("Day", 0),
+  ];
+  bool selectexpirationDateHaveError = false;
+  bool haveError = false;
+  final formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        //AppBar
         appBar: AppBar(
           title: Text(
             'Add Reminder',
@@ -50,112 +60,163 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
         ),
+
+        //bodyyyyyyyyyyyyyyyyyyyyyyyyyyy
         body: Container(
           width: 1.sw,
           height: 1.sh,
           padding: EdgeInsets.all(10.r),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                CustomeTextField(
-                    controller: titleController,
-                    validatorFunction: (v) {
-                      return null;
-                    },
-                    label: 'Reminder Title',
-                    hintText: 'Enter Reminder Title',
-                    prefixIcon: Icons.abc),
-                Padding(
-                  padding: EdgeInsets.all(10.r),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Exparation Date',
-                            style: Theme.of(context)
-                                .typography
-                                .dense
-                                .bodyLarge!
-                                .copyWith(color: Colors.black),
+          child: Form(
+            key: formkey,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  //user set reminder Title in this text field
+                  CustomeTextField(
+                      controller: titleController,
+                      validatorFunction: (v) {
+                        return null;
+                      },
+                      label: 'Reminder Title',
+                      hintText: 'Enter Reminder Title',
+                      prefixIcon: Icons.abc),
+
+                  //in this comment code user pick a expieration date
+                  Padding(
+                    padding: EdgeInsets.all(10.r),
+                    child: Row(
+                      children: [
+                        if (selectexpirationDateHaveError)
+                          Icon(
+                            Icons.error_outline,
+                            color: Colors.red.shade700,
                           ),
-                          Text(selectedDate == null
-                              ? ""
-                              : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"),
-                        ],
-                      ),
-                       SizedBox(
-                        width: 5.w,
-                      ),
-                      CupertinoButton(
-                        color: primaryColor,
-                        borderRadius:  BorderRadius.all(
-                          Radius.circular(15.r),
+                        SizedBox(
+                          width: 5.w,
                         ),
-                        padding:  EdgeInsets.all(10.r),
-                        child: const Text('Pick Date'),
-                        onPressed: () async {
-                          await pickDate(context);
-                        },
-                      ),
-                    ],
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (selectExpierationDate == null)
+                              Padding(
+                                  padding:
+                                      EdgeInsets.only(top: 5.h, left: 5.w)),
+                            Text(
+                              'Exparation Date',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context)
+                                  .typography
+                                  .dense
+                                  .bodyLarge!
+                                  .copyWith(color: Colors.black),
+                            ),
+                            if (selectExpierationDate != null)
+                              Text(
+                                  "${selectExpierationDate!.day}-${selectExpierationDate!.month}-${selectExpierationDate!.year}"),
+                          ],
+                        ),
+                        const Spacer(),
+                        CupertinoButton(
+                          color: primaryColor,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.r),
+                          ),
+                          padding: EdgeInsets.all(10.r),
+                          child: const Text('Pick Date'),
+                          onPressed: () async {
+                            await pickDate(context);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Reminders',
-                        style: Theme.of(context)
-                            .typography
-                            .englishLike
-                            .bodyLarge!
-                            .copyWith(
-                                color: Colors.pink,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          numberOfReminders++;
-                          setState(() {});
-                          print('button pressed=============');
-                        },
-                        child: const CircleAvatar(
-                          backgroundColor: Colors.pink,
-                          radius: 15,
+
+                  //in this section code we have only reminders text and reminder add button to add reminders
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(top: 10.h),
+                          child: Text('Reminders', style: subtitle),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            reminderDates.add(
+                              ReminderDate("Day", 0),
+                            );
+                            setState(() {});
+                          },
                           child: CircleAvatar(
-                            radius: 13,
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.add,
-                              size: 20,
-                              color: Colors.pink,
+                            backgroundColor: primaryColor,
+                            radius: 15,
+                            child: CircleAvatar(
+                              radius: 13,
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.add,
+                                size: 20,
+                                color: primaryColor,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    children: [
-                      for (int i = 0; i < numberOfReminders; i++)
-                        Row(
-                          children: [
-                            Text('$i'),
-                          ],
-                        ),
-                    ],
+
+                  Padding(
+                    padding: EdgeInsets.all(10.h),
+                    child: Column(
+                      children: [
+                        for (int i = 0; i < reminderDates.length; i++)
+                          SetReminderDateCard(
+                            reminderDate: reminderDates[i],
+                            onTap: () {
+                              reminderDates.remove(reminderDates[i]);
+                              setState(() {});
+                            },
+                            showError: haveError,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        //Save Button
+        floatingActionButton: Padding(
+          padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
+          child: ElevatedButton(
+            style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all(primaryColor)),
+            onPressed: () {
+              if (formkey.currentState!.validate()) {
+                if (selectExpierationDate == null) {
+                  selectexpirationDateHaveError = true;
+                  setState(() {});
+                  return;
+                }
+                for (var element in reminderDates) {
+                  if (element.number == 0) {
+                    haveError = true;
+                    setState(() {});
+                    return;
+                  }
+                }
+                return;
+              }
+            },
+            child: Text(
+              'Save',
+              style: buttonTextStyle.copyWith(
+                fontSize: 26.sp,
+              ),
             ),
           ),
         ),
