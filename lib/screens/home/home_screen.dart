@@ -1,6 +1,9 @@
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
 import 'package:fastlink_reminder/screens/home/widgets/reminder_card.dart';
+import 'package:fastlink_reminder/utils/colors.dart';
+import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.pink,
+        backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         onPressed: () {
           print('Go to Add Reminder Screen .................');
@@ -25,32 +28,24 @@ class HomeScreen extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Reminder',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: largetext.copyWith(
+              color: Colors.white, fontStyle: FontStyle.italic),
         ),
         centerTitle: true,
-        backgroundColor: Colors.pink,
+        backgroundColor: primaryColor,
       ),
       body: Container(
-        width: MediaQuery.sizeOf(context).width,
-        height: MediaQuery.sizeOf(context).height,
-        padding: const EdgeInsets.all(10),
-        child: ListView(
-          children: const [
-            ReminderCard(
-              reminderTitle: 'Reminder 1',
-              exparationDay: '10/7/2024',
-            ),
-            ReminderCard(
-              reminderTitle: 'Reminder 2',
-              exparationDay: '10/7/2024',
-            ),
-            ReminderCard(
-              reminderTitle: 'Reminder 3',
-              exparationDay: '10/7/2024',
-            ),
-          ],
+        width: 1.sw,
+        height: 1.sh,
+        padding: EdgeInsets.all(10.r),
+        child: ListView.builder(
+          itemCount: 5,
+          itemBuilder: (context, index) => ReminderCard(
+            reminderTitle: 'Reminder $index',
+            exparationDay: 'Expiers After $index Months',
+          ),
         ),
       ),
     );

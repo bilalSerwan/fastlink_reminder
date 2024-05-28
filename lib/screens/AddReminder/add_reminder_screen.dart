@@ -1,8 +1,10 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddReminderScreen extends StatefulWidget {
   const AddReminderScreen({super.key});
@@ -40,18 +42,18 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                 .englishLike
                 .headlineMedium!
                 .copyWith(
-                  fontSize: 24,
+                  fontSize: 24.sp,
                   fontWeight: FontWeight.bold,
                 ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.pink,
+          backgroundColor: primaryColor,
           foregroundColor: Colors.white,
         ),
         body: Container(
-          width: MediaQuery.sizeOf(context).width,
-          height: MediaQuery.sizeOf(context).height,
-          padding: const EdgeInsets.all(10),
+          width: 1.sw,
+          height: 1.sh,
+          padding: EdgeInsets.all(10.r),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -64,7 +66,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     hintText: 'Enter Reminder Title',
                     prefixIcon: Icons.abc),
                 Padding(
-                  padding: const EdgeInsets.all(10),
+                  padding: EdgeInsets.all(10.r),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -81,18 +83,18 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                           ),
                           Text(selectedDate == null
                               ? ""
-                              : "${selectedDate!.year}-${selectedDate!.month}-${selectedDate!.day}"),
+                              : "${selectedDate!.day}-${selectedDate!.month}-${selectedDate!.year}"),
                         ],
                       ),
-                      const SizedBox(
-                        width: 5,
+                       SizedBox(
+                        width: 5.w,
                       ),
                       CupertinoButton(
-                        color: Colors.pink,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(15),
+                        color: primaryColor,
+                        borderRadius:  BorderRadius.all(
+                          Radius.circular(15.r),
                         ),
-                        padding: const EdgeInsets.all(10),
+                        padding:  EdgeInsets.all(10.r),
                         child: const Text('Pick Date'),
                         onPressed: () async {
                           await pickDate(context);

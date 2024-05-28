@@ -1,4 +1,7 @@
+import 'package:fastlink_reminder/screens/home/widgets/slidable_button.dart';
+import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 class ReminderCard extends StatelessWidget {
@@ -13,91 +16,36 @@ class ReminderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
+      endActionPane: const ActionPane(
+        motion: ScrollMotion(),
+
+        //slidable Buttons delete and edit 
         children: [
-          InkWell(
-            onTap: () {
-              print('Remove Reminder ..........................');
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              width: 75,
-              height: 80,
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
-                ),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Delete',
-                      style: Theme.of(context).typography.englishLike.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          SlidableButton(
+            buttonColor: Colors.red,
+            buttonIcon: Icons.delete,
+            buttonName: 'Delete',
           ),
-          InkWell(
-            onTap: () {
-              print('Remove Reminder ..........................');
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-              width: 75,
-              height: 80,
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
-                ),
-              ),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
-                      Icons.edit,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      'Edit',
-                      style: Theme.of(context).typography.englishLike.bodySmall,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          SlidableButton(
+              buttonColor: Colors.grey,
+              buttonIcon: Icons.edit,
+              buttonName: 'Edit'),
         ],
       ),
+
+      
       child: Container(
-        width: MediaQuery.sizeOf(context).width * 0.92,
+        width: 0.92.sw,
         decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15),
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.r),
           ),
           border: Border.all(
-            color: Colors.pink,
+            color: primaryColor,
           ),
         ),
-        margin: const EdgeInsets.all(5),
-        padding: const EdgeInsets.all(10),
+        margin: EdgeInsets.all(5.r),
+        padding: EdgeInsets.all(10.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -107,7 +55,7 @@ class ReminderCard extends StatelessWidget {
                   .typography
                   .englishLike
                   .bodyMedium!
-                  .copyWith(color: Colors.black, fontSize: 20),
+                  .copyWith(color: Colors.black, fontSize: 20.sp),
             ),
             Text(
               exparationDay,

@@ -1,6 +1,7 @@
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomeTextField extends StatelessWidget {
   const CustomeTextField({
@@ -25,19 +26,20 @@ class CustomeTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: EdgeInsets.all(10.r),
       child: TextFormField(
         validator: validatorFunction,
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: subcolor.withOpacity(0.5), fontSize: 15),
+          hintStyle:
+              TextStyle(color: subcolor.withOpacity(0.5), fontSize: 15.sp),
           focusColor: primaryColor,
           prefixIcon: Icon(
             prefixIcon,
             color: primaryColor.withOpacity(0.7),
-            size: 20,
+            size: 20.sp,
           ),
           suffix: suffixIcon == null
               ? const SizedBox()
@@ -46,37 +48,25 @@ class CustomeTextField extends StatelessWidget {
                   style: subtitle2,
                 ),
           labelStyle: subtitle.copyWith(color: subcolor.withOpacity(0.5)),
-          label: Text(label),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryColor,
-              strokeAlign: 1.3,
-            ),
+          label: Text(
+            label,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryColor,
-              strokeAlign: 1.3,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              color: primaryColor,
-              strokeAlign: 1.3,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Colors.red,
-              strokeAlign: 1.3,
-            ),
-          ),
+          border: customeOutlineInputBorder(borderColor: primaryColor),
+          enabledBorder: customeOutlineInputBorder(borderColor: primaryColor),
+          focusedBorder: customeOutlineInputBorder(borderColor: primaryColor),
+          errorBorder: customeOutlineInputBorder(borderColor: Colors.red),
         ),
       ),
     );
   }
+}
+
+OutlineInputBorder customeOutlineInputBorder({required Color borderColor}) {
+  return OutlineInputBorder(
+    borderRadius: BorderRadius.circular(10.r),
+    borderSide: BorderSide(
+      color: primaryColor,
+      strokeAlign: 1.3,
+    ),
+  );
 }
