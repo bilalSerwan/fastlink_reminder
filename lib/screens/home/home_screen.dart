@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
           itemCount: 5,
           itemBuilder: (context, index) => ReminderCard(
             reminderTitle: 'Reminder $index',
-            exparationDay: 'Expiers After $index Months',
+            expirationDate: 'Expiers After $index Months',
           ),
         ),
       ),

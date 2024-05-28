@@ -8,10 +8,10 @@ class ReminderCard extends StatelessWidget {
   const ReminderCard({
     super.key,
     required this.reminderTitle,
-    required this.exparationDay,
+    required this.expirationDate,
   });
   final String reminderTitle;
-  final String exparationDay;
+  final String expirationDate;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class ReminderCard extends StatelessWidget {
         ],
       ),
 
-      
+
       child: Container(
         width: 0.92.sw,
         decoration: BoxDecoration(
@@ -58,7 +58,7 @@ class ReminderCard extends StatelessWidget {
                   .copyWith(color: Colors.black, fontSize: 20.sp),
             ),
             Text(
-              exparationDay,
+              expirationDate,
               style: Theme.of(context)
                   .typography
                   .englishLike
