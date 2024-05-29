@@ -147,6 +147,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                             reminderDates.add(
                               ReminderDate("Day", 0),
                             );
+                            haveError = false;
                             setState(() {});
                           },
                           child: CircleAvatar(

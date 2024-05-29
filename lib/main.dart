@@ -1,6 +1,8 @@
+import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,9 +19,12 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: SignInScreen(),
+        return ChangeNotifierProvider(
+          create: (context) => AuthProvider(),
+          child: const MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: SignInScreen(),
+          ),
         );
       },
     );
