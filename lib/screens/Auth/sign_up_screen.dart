@@ -1,13 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
+import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
+import 'package:fastlink_reminder/utils/loading_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -19,9 +24,17 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController emailController = TextEditingController();
 
-  final TextEditingController nameController = TextEditingController();
+  final TextEditingController fullNameController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    fullNameController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 100.h,
+                    height: 0.18.sh,
                   ),
                   Text(
                     'FastLink',
@@ -49,15 +62,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     'Reminder',
                     style: largetext,
                   ),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+
+                  //text field for Full Name
                   CustomeTextField(
-                    controller: nameController,
+                    controller: fullNameController,
                     validatorFunction: (value) {
-                      if (value!.trim().isEmpty ||
-                          value.length < 5 ||
-                          value.length > 50) {
-                        return "the value mut be between 5 to 50 chars";
-                      }
-                      return null;
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(value, 5, 50);
                     },
                     label: 'Full Name',
                     hintText: 'Enter Your Full Name',
@@ -67,15 +82,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: subcolor.withOpacity(0.4),
                     ),
                   ),
+
+                  //text Field for email
                   CustomeTextField(
                     controller: emailController,
                     validatorFunction: (value) {
-                      if (value!.trim().isEmpty ||
-                          value.length < 5 ||
-                          value.length > 50) {
-                        return "the value mut be between 5 to 50 chars";
-                      }
-                      return null;
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(value, 5, 50);
                     },
                     label: 'Enter Your Email',
                     hintText: 'example',
@@ -84,42 +98,42 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     keyboardType: TextInputType.emailAddress,
                     suffixIcon: Text(
                       '@nawroz.telecom.com',
-                      style: subtitle2,
+                      style: subtitle2.copyWith(fontSize: 12.sp),
                     ),
                   ),
+
                   SizedBox(
                     height: 15.h,
                   ),
+
                   //signUp Button
                   ElevatedButton(
                     onPressed: () async {
+                      if (context
+                          .read<AuthProvider>()
+                          .checkEmail(emailController.text)) {}
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
-                      print('running sign up Method .....................!');
-                      print('add user .......................');
-                      showDialog(
-                          context: context,
-                          builder: (context) => Center(
-                                child: SizedBox(
-                                  width: 100.w,
-                                  height: 100.h,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ));
-                      await Future.delayed(
-                        const Duration(seconds: 2),
-                      );
+                      await showLoadiongDialog(context);
+
+                      var result = await context
+                          .read<AuthProvider>()
+                          .signUpMethod(
+                              email: emailController.text,
+                              fullName: fullNameController.text);
                       Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                        (route) => false,
-                      );
+                      if (result) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        log('error===============================>');
+                      }
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(primaryColor),

@@ -1,9 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
+import 'package:fastlink_reminder/utils/loading_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/gestures.dart';
@@ -26,6 +29,14 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
@@ -37,11 +48,11 @@ class _SignInScreenState extends State<SignInScreen> {
             height: 1.sh,
             child: SingleChildScrollView(
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    height: 100.h,
+                    height: 0.18.sh,
                   ),
                   Text(
                     'FastLink',
@@ -51,6 +62,10 @@ class _SignInScreenState extends State<SignInScreen> {
                     'Reminder',
                     style: largetext,
                   ),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  //textfield for email
                   CustomeTextField(
                     controller: emailController,
                     validatorFunction: (value) {
@@ -59,19 +74,25 @@ class _SignInScreenState extends State<SignInScreen> {
                           .validationFunction(value, 5, 50);
                     },
                     label: 'Enter Your Email',
-                    hintText: 'example@nawroz.telecom.com',
+                    hintText: 'example',
                     prefixIcon: Icon(
                       Icons.email,
                       size: 20.r,
                       color: subcolor.withOpacity(0.4),
                     ),
+                    suffixIcon: Text(
+                      '@nawroz.telecom.com',
+                      style: subtitle2.copyWith(fontSize: 12.sp),
+                    ),
                   ),
+
+                  //textfield for password
                   CustomeTextField(
                     controller: passwordController,
                     validatorFunction: (value) {
                       return context
                           .read<AuthProvider>()
-                          .validationFunction(value, 5, 50);
+                          .validationFunction(value, 8, 30);
                     },
                     label: 'Enter Your Password',
                     hintText: context.watch<AuthProvider>().showPassword
@@ -128,33 +149,33 @@ class _SignInScreenState extends State<SignInScreen> {
                   //login Button
                   ElevatedButton(
                     onPressed: () async {
+                      if (context
+                          .read<AuthProvider>()
+                          .checkEmail(emailController.text)) {}
+                      //check validation
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
-                      print('running Login Method .....................!');
-                      print('check user .......................');
-                      showDialog(
-                          context: context,
-                          builder: (context) => Center(
-                                child: SizedBox(
-                                  width: 100.w,
-                                  height: 100.w,
-                                  child: const CircularProgressIndicator(
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ));
-                      await Future.delayed(
-                        const Duration(seconds: 2),
-                      );
+
+                      //show loading dialog
+                      await showLoadiongDialog(context);
+                      var result =
+                          await context.read<AuthProvider>().signInMethod(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
                       Navigator.pop(context);
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                        (route) => false,
-                      );
+                      if (result) {
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                        log('error===============================>');
+                      }
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(primaryColor),
@@ -164,6 +185,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       style: buttonTextStyle,
                     ),
                   ),
+
                   SizedBox(
                     height: 10.h,
                   ),

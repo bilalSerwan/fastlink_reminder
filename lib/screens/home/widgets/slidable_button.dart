@@ -6,18 +6,17 @@ class SlidableButton extends StatelessWidget {
     super.key,
     required this.buttonName,
     required this.buttonColor,
-    required this.buttonIcon,
+    required this.buttonIcon, required this.buttonPressed,
   });
   final String buttonName;
   final Color buttonColor;
   final IconData buttonIcon;
+  final void Function() buttonPressed;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        print('$buttonName Reminder ..........................');
-      },
+      onTap: buttonPressed,
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 5.h, vertical: 5.w),
         width: 70.w,

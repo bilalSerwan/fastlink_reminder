@@ -9,31 +9,36 @@ class ReminderCard extends StatelessWidget {
     super.key,
     required this.reminderTitle,
     required this.expirationDate,
+    required this.deleteButtonPressed,
+    required this.editButtonPressed,
   });
   final String reminderTitle;
   final String expirationDate;
+  final void Function() deleteButtonPressed;
+  final void Function() editButtonPressed;
 
   @override
   Widget build(BuildContext context) {
     return Slidable(
-      endActionPane: const ActionPane(
-        motion: ScrollMotion(),
+      endActionPane: ActionPane(
+        motion: const ScrollMotion(),
 
-        //slidable Buttons delete and edit 
+        //slidable Buttons delete and edit
         children: [
           SlidableButton(
             buttonColor: Colors.red,
             buttonIcon: Icons.delete,
             buttonName: 'Delete',
+            buttonPressed: deleteButtonPressed,
           ),
           SlidableButton(
-              buttonColor: Colors.grey,
-              buttonIcon: Icons.edit,
-              buttonName: 'Edit'),
+            buttonColor: Colors.grey,
+            buttonIcon: Icons.edit,
+            buttonName: 'Edit',
+            buttonPressed: editButtonPressed,
+          ),
         ],
       ),
-
-
       child: Container(
         width: 0.92.sw,
         decoration: BoxDecoration(

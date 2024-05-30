@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:fastlink_reminder/model/reminder_date.dart';
+import 'package:fastlink_reminder/Model/reminder_date.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';

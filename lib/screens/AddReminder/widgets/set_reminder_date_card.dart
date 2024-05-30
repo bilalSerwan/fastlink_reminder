@@ -1,4 +1,4 @@
-import 'package:fastlink_reminder/model/reminder_date.dart';
+import 'package:fastlink_reminder/Model/reminder_date.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/drop_down_button.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
