@@ -26,7 +26,7 @@ class _MyAppState extends State<MyApp> {
       builder: (_, child) {
         return ChangeNotifierProvider(
           create: (context) => AuthProvider(),
-          child: MaterialApp(
+          child: const MaterialApp(
             debugShowCheckedModeBanner: false,
             home: SignInScreen(),
           ),
