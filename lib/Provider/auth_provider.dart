@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final formKey = GlobalKey<FormState>();
   bool showPassword = false;
   bool isLoading = false;
-  bool haveError = false;
-  String? validationFunction(String value, int miniLentgh, int maxLentgh) {
+  bool checkBoxValue = false;
+  String? validationFunction(String? value, int miniLentgh, int maxLentgh) {
+    if (value == null) return 'This field is required';
     if (value.trim().isEmpty) {
       return 'This field is required';
     }
@@ -17,19 +17,20 @@ class AuthProvider extends ChangeNotifier {
     }
     return null;
   }
-void changeShowPassword(bool value){
-  showPassword=value;
-  notifyListeners();
-}
 
-void changeIsLoading(bool value){
-  isLoading=value;
-  notifyListeners();
-}
-void changeHaveError(bool value){
-  haveError=value;
-  notifyListeners();
-}
+  void changeShowPassword() {
+    showPassword = !showPassword;
+    notifyListeners();
+  }
 
+  void changeIsLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+  void changeCheckBoxValue() {
+    checkBoxValue = !checkBoxValue;
+    notifyListeners();
+  }
 }//class
 

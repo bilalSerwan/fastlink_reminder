@@ -13,15 +13,17 @@ class CustomeTextField extends StatelessWidget {
     required this.prefixIcon,
     this.suffixIcon,
     this.keyboardType = TextInputType.text,
+    this.showPassword = false,
   });
 
   final TextEditingController controller;
   final String? Function(String?) validatorFunction;
   final String label;
   final String hintText;
-  final IconData prefixIcon;
+  final Widget prefixIcon;
   final Widget? suffixIcon;
   final TextInputType keyboardType;
+  final bool showPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -29,24 +31,20 @@ class CustomeTextField extends StatelessWidget {
       padding: EdgeInsets.all(10.r),
       child: TextFormField(
         validator: validatorFunction,
+        obscureText: showPassword,
+        autocorrect: false,
+        obscuringCharacter: '*',
         controller: controller,
         keyboardType: keyboardType,
         decoration: InputDecoration(
+          contentPadding: EdgeInsets.all(20.w),
+          constraints: BoxConstraints(maxHeight: 70.h, maxWidth: 0.9.sw),
           hintText: hintText,
           hintStyle:
               TextStyle(color: subcolor.withOpacity(0.5), fontSize: 15.sp),
           focusColor: primaryColor,
-          prefixIcon: Icon(
-            prefixIcon,
-            color: primaryColor.withOpacity(0.7),
-            size: 20.sp,
-          ),
-          suffix: suffixIcon == null
-              ? const SizedBox()
-              : Text(
-                  '@nawroz.telecom.com',
-                  style: subtitle2,
-                ),
+          prefixIcon: prefixIcon,
+          suffix: suffixIcon,
           labelStyle: subtitle.copyWith(color: subcolor.withOpacity(0.5)),
           label: Text(
             label,

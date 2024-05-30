@@ -23,8 +23,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> sendEmail() async {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,18 +50,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: largetext,
                   ),
                   CustomeTextField(
-                      controller: nameController,
-                      validatorFunction: (value) {
-                        if (value!.trim().isEmpty ||
-                            value.length < 5 ||
-                            value.length > 50) {
-                          return "the value mut be between 5 to 50 chars";
-                        }
-                        return null;
-                      },
-                      label: 'Full Name',
-                      hintText: 'Enter Your Full Name',
-                      prefixIcon: Icons.person),
+                    controller: nameController,
+                    validatorFunction: (value) {
+                      if (value!.trim().isEmpty ||
+                          value.length < 5 ||
+                          value.length > 50) {
+                        return "the value mut be between 5 to 50 chars";
+                      }
+                      return null;
+                    },
+                    label: 'Full Name',
+                    hintText: 'Enter Your Full Name',
+                    prefixIcon: Icon(
+                      Icons.person,
+                      size: 20.r,
+                      color: subcolor.withOpacity(0.4),
+                    ),
+                  ),
                   CustomeTextField(
                     controller: emailController,
                     validatorFunction: (value) {
@@ -76,7 +79,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                     label: 'Enter Your Email',
                     hintText: 'example',
-                    prefixIcon: Icons.email,
+                    prefixIcon: Icon(Icons.email,
+                        size: 20.r, color: subcolor.withOpacity(0.4)),
                     keyboardType: TextInputType.emailAddress,
                     suffixIcon: Text(
                       '@nawroz.telecom.com',
@@ -149,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignInScreen(),
+                                    builder: (context) => SignInScreen(),
                                   ),
                                 );
                               },

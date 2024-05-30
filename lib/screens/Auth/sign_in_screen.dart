@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
@@ -8,22 +9,16 @@ import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
-class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key});
+class SignInScreen extends StatelessWidget {
+  SignInScreen({super.key});
 
-  @override
-  State<SignInScreen> createState() => _SignInScreenState();
-}
-
-class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
 
   final TextEditingController passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
-  bool checkBoxValue = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,31 +47,47 @@ class _SignInScreenState extends State<SignInScreen> {
                     style: largetext,
                   ),
                   CustomeTextField(
-                      controller: emailController,
-                      validatorFunction: (value) {
-                        if (value!.trim().isEmpty ||
-                            value.length < 5 ||
-                            value.length > 50) {
-                          return "the value mut be between 5 to 50 chars";
-                        }
-                        return null;
-                      },
-                      label: 'Enter Your Email',
-                      hintText: 'example@nawroz.telecom.com',
-                      prefixIcon: Icons.email),
+                    controller: emailController,
+                    validatorFunction: (value) {
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(value, 5, 50);
+                    },
+                    label: 'Enter Your Email',
+                    hintText: 'example@nawroz.telecom.com',
+                    prefixIcon: Icon(
+                      Icons.email,
+                      size: 20.r,
+                      color: subcolor.withOpacity(0.4),
+                    ),
+                  ),
                   CustomeTextField(
                     controller: passwordController,
                     validatorFunction: (value) {
-                      if (value!.trim().isEmpty ||
-                          value.length < 5 ||
-                          value.length > 50) {
-                        return "the value mut be between 8 to 20 chars";
-                      }
-                      return null;
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(value, 5, 50);
                     },
                     label: 'Enter Your Password',
-                    hintText: '**********',
-                    prefixIcon: Icons.password,
+                    hintText: context.watch<AuthProvider>().showPassword
+                        ? '**********'
+                        : "Password  ",
+                    showPassword: context.watch<AuthProvider>().showPassword,
+                    prefixIcon: Icon(
+                      Icons.lock_outline,
+                      size: 20.r,
+                      color: subcolor.withOpacity(0.4),
+                    ),
+                    suffixIcon: IconButton(
+                      iconSize: 20.r,
+                      highlightColor: Colors.transparent,
+                      onPressed: () {
+                        context.read<AuthProvider>().changeShowPassword();
+                      },
+                      icon: Icon(context.watch<AuthProvider>().showPassword
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                    ),
                   ),
 
                   //check box and text
@@ -88,15 +99,16 @@ class _SignInScreenState extends State<SignInScreen> {
                           width: 40.w,
                           height: 40.w,
                           child: Checkbox(
-                            value: checkBoxValue,
+                            value: context.watch<AuthProvider>().checkBoxValue,
                             side: BorderSide(
                                 strokeAlign: 2.r, color: primaryColor),
                             shape: const CircleBorder(),
                             checkColor: Colors.white,
                             activeColor: primaryColor,
-                            onChanged: (bool? newValue) {
-                              checkBoxValue = newValue ?? false;
-                              setState(() {});
+                            onChanged: (value) {
+                              context
+                                  .read<AuthProvider>()
+                                  .changeCheckBoxValue();
                             },
                           ),
                         ),

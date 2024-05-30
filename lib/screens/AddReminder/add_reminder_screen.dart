@@ -73,13 +73,18 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                 children: [
                   //user set reminder Title in this text field
                   CustomeTextField(
-                      controller: titleController,
-                      validatorFunction: (v) {
-                        return null;
-                      },
-                      label: 'Reminder Title',
-                      hintText: 'Enter Reminder Title',
-                      prefixIcon: Icons.abc),
+                    controller: titleController,
+                    validatorFunction: (v) {
+                      return null;
+                    },
+                    label: 'Reminder Title',
+                    hintText: 'Enter Reminder Title',
+                    prefixIcon: Icon(
+                      Icons.abc,
+                      size: 20.r,
+                      color: subcolor.withOpacity(0.4),
+                    ),
+                  ),
 
                   //in this comment code user pick a expieration date
                   Padding(
