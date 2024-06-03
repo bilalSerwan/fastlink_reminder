@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "207619040237",
+    "project_id": "fl-reminder",
+    "storage_bucket": "fl-reminder.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:207619040237:android:9ec6e79a00851b5ed7bde4",
+        "android_client_info": {
+          "package_name": "com.example.fastlink_reminder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDBOhbPjZwRiEDzdXOA2sXF0Xu3u1SgikA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

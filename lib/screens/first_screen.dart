@@ -56,7 +56,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return true;
   }
 
-  bool checkTokenExpiered() {
-    return AuthProvider().checkTokenExpiered();
+   checkTokenExpiered()async {
+    return await AuthProvider().checkTokenExpiered('');
   }
 }

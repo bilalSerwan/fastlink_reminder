@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Services/service.dart';
+import 'package:fastlink_reminder/links.dart';
+import 'package:fastlink_reminder/model/user.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AuthProvider extends ChangeNotifier {
   bool showPassword = false;
@@ -32,20 +36,25 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> signInMethod(
+  Future<String?> signInMethod(
       {required String email, required String password}) async {
     log("email => $email ,,, password => $password");
-    apiServices.checkUser();
-    return false;
+    final result =
+        await apiServices.userLogin(email: email, password: password);
+    if (result['message'] == null) {
+      final user = User.fromJson(result);
+      print(user.userData!.name);
+      return null;
+    } 
+    return result['message'];
   }
 
-  Future<bool> signUpMethod(
+  Future<String> signUpMethod(
       {required String email, required String fullName}) async {
-    log('add user ==============================> to database and send email');
     log('email ======> $email |||| fullName ======> $fullName');
-    apiServices.sendEmail(email);
-    ApiServices().addUser();
-    return false;
+    final result = await apiServices.sendEmail(email: email, name: fullName);
+    log("Result ===================>>>>>>>>>>$result");
+    return result['message'];
   }
 
   Future addReminder() async {
@@ -65,8 +74,13 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  bool checkTokenExpiered() {
-    log('check token expiered ==============================>');
+  Future<bool> checkTokenExpiered(String token) async {
+    var response = await http.get(Uri.parse(checktokenApi), headers: {
+      'Authorization': 'Bearer $token',
+      'Accept': 'application/json'
+    });
+    final result = jsonDecode(response.body);
+    print(result);
     return true;
   }
 }//class

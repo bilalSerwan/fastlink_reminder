@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"fl-reminder","appId":"1:207619040237:android:9ec6e79a00851b5ed7bde4","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"fl-reminder","configurations":{"android":"1:207619040237:android:9ec6e79a00851b5ed7bde4","ios":"1:207619040237:ios:82bc20d08fdec0b2d7bde4"}}}}}}

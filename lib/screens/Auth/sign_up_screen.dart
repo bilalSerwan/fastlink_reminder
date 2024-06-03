@@ -1,10 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
-import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/loading_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
@@ -115,25 +112,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }
+
                       await showLoadiongDialog(context);
 
-                      var result = await context
+                      final result = await context
                           .read<AuthProvider>()
                           .signUpMethod(
-                              email: emailController.text,
+                              email:
+                                  '${emailController.text}+@newroztelecom.com',
                               fullName: fullNameController.text);
                       Navigator.pop(context);
-                      if (result) {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                          (route) => false,
-                        );
-                      } else {
-                        log('error===============================>');
-                      }
+                      emailController.clear();
+                      fullNameController.clear();
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Center(
+                              child: Container(
+                                padding: EdgeInsets.all(15.w),
+                                width: 0.9.sw,
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(20.r))),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      '$result please Login',
+                                      textAlign: TextAlign.center,
+                                      style: subtitle.copyWith(
+                                          decoration: TextDecoration.none),
+                                    ),
+                                    SizedBox(
+                                      height: 10.h,
+                                    ),
+                                    OutlinedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const SignInScreen()));
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                    SizedBox(
+                                      height: 5.h,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(primaryColor),

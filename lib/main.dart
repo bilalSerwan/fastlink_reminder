@@ -1,18 +1,19 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
-import 'package:fastlink_reminder/screens/first_screen.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fastlink_reminder/firebase_options.dart';
+import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
-    DevicePreview(
-      enabled: !kReleaseMode,
-      builder: (context) => const MyApp(), // Wrap your app
-    ),
+    const MyApp(),
   );
 }
 
@@ -32,11 +33,9 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => HomeProvider())
           ],
-          child: MaterialApp(
-            locale: DevicePreview.locale(context),
-            builder: DevicePreview.appBuilder,
+          child: const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: const SplashScreen(),
+            home: SignUpScreen(),
           ),
         );
       },

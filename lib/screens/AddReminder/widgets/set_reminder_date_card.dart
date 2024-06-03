@@ -26,11 +26,11 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
       padding: EdgeInsets.all(7.w),
       margin: EdgeInsets.all(3.w),
       width: 0.92.sw,
-      height: 150.h,
+      height: 125.h,
       decoration: widget.showError
           ? BoxDecoration(
               color: widget.reminderDate.number == 0
-                  ? Colors.red[200]
+                  ? Colors.red[500]!.withOpacity(0.3)
                   : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
             )

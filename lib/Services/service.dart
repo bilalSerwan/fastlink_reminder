@@ -1,5 +1,19 @@
+import 'dart:convert';
+
+import 'package:fastlink_reminder/links.dart';
+import 'package:http/http.dart' as http;
+
 class ApiServices {
-  checkUser() async {}
+  Future userLogin({required String email, required String password}) async {
+    final response = await http.post(
+        headers: {
+          'Accept': 'application/json',
+        },
+        Uri.parse(loginApi),
+        body: {'email': email, 'password': password});
+    print(jsonDecode(response.body));
+    return jsonDecode(response.body);
+  }
 
   addUser() {}
 
@@ -9,8 +23,15 @@ class ApiServices {
 
   deleteReminder() {}
 
-  void sendEmail(String email) {
-    print('send email to $email');
+  Future sendEmail({required String email, required String name}) async {
+    final response = await http.post(
+        headers: {'Accept': 'application/json'},
+        Uri.parse(registerApi),
+        body: {
+          'name': name,
+          'email': email,
+        });
+    return jsonDecode(response.body);
   }
 
   void fetchData() {}

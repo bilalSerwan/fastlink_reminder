@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
@@ -23,14 +21,12 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
     passwordController.dispose();
@@ -92,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     validatorFunction: (value) {
                       return context
                           .read<AuthProvider>()
-                          .validationFunction(value, 8, 30);
+                          .validationFunction(value, 8, 200);
                     },
                     label: 'Enter Your Password',
                     hintText: context.watch<AuthProvider>().showPassword
@@ -159,13 +155,16 @@ class _SignInScreenState extends State<SignInScreen> {
 
                       //show loading dialog
                       await showLoadiongDialog(context);
-                      var result =
-                          await context.read<AuthProvider>().signInMethod(
-                                email: emailController.text,
-                                password: passwordController.text,
-                              );
+                      var result = await context
+                          .read<AuthProvider>()
+                          .signInMethod(
+                            email: '${emailController.text}@newroztelecom.com',
+                            password: passwordController.text,
+                          );
                       Navigator.pop(context);
-                      if (result) {
+                      if (result == null) {
+                        emailController.clear();
+                        passwordController.clear();
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
@@ -174,7 +173,43 @@ class _SignInScreenState extends State<SignInScreen> {
                           (route) => false,
                         );
                       } else {
-                        log('error===============================>');
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Center(
+                                child: Container(
+                                  padding: EdgeInsets.all(15.w),
+                                  width: 0.9.sw,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(20.r))),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '$result please Login',
+                                        textAlign: TextAlign.center,
+                                        style: subtitle.copyWith(
+                                            decoration: TextDecoration.none),
+                                      ),
+                                      SizedBox(
+                                        height: 10.h,
+                                      ),
+                                      OutlinedButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('OK'),
+                                      ),
+                                      SizedBox(
+                                        height: 5.h,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
                       }
                     },
                     style: ButtonStyle(
