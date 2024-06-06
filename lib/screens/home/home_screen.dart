@@ -1,5 +1,6 @@
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
+import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/home/widgets/reminder_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
@@ -35,6 +36,9 @@ class HomeScreen extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: primaryColor,
+        actions: [IconButton(onPressed: (){
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>SignInScreen()), (route) => false);
+        }, icon: Icon(Icons.logout,color: Colors.white,)),],
       ),
       body: Container(
         width: 1.sw,
