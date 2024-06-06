@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:fastlink_reminder/Model/reminder_date.dart';
+import 'package:fastlink_reminder/Provider/auth_provider.dart';
+import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
@@ -8,6 +9,7 @@ import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class AddReminderScreen extends StatefulWidget {
   const AddReminderScreen({super.key});
@@ -32,8 +34,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
     setState(() {});
   }
 
-  List<ReminderDate> reminderDates = [
-    ReminderDate("Day", 0),
+  List<Schedules> schedules = [
+    Schedules(amount: 0, unit: "day"),
   ];
   bool selectexpirationDateHaveError = false;
   bool haveError = false;
@@ -75,7 +77,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                   CustomeTextField(
                     controller: titleController,
                     validatorFunction: (v) {
-                      return null;
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(v, 5, 50);
                     },
                     label: 'Reminder Title',
                     hintText: 'Enter Reminder Title',
@@ -149,8 +153,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            reminderDates.add(
-                              ReminderDate("Day", 0),
+                            schedules.add(
+                              Schedules(amount: 1, unit: "day"),
                             );
                             haveError = false;
                             setState(() {});
@@ -177,11 +181,11 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     padding: EdgeInsets.all(10.h),
                     child: Column(
                       children: [
-                        for (int i = 0; i < reminderDates.length; i++)
+                        for (int i = 0; i < schedules.length; i++)
                           SetReminderDateCard(
-                            reminderDate: reminderDates[i],
+                            schedule: schedules[i],
                             onTap: () {
-                              reminderDates.remove(reminderDates[i]);
+                              schedules.remove(schedules[i]);
                               setState(() {});
                             },
                             showError: haveError,
@@ -208,8 +212,8 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                   setState(() {});
                   return;
                 }
-                for (var element in reminderDates) {
-                  if (element.number == 0) {
+                for (var element in schedules) {
+                  if (element.amount == 0) {
                     haveError = true;
                     setState(() {});
                     return;

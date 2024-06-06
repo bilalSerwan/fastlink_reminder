@@ -38,7 +38,6 @@ class CustomeTextField extends StatelessWidget {
         keyboardType: keyboardType,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.all(20.w),
-          constraints: BoxConstraints(maxHeight: 70.h, maxWidth: 0.9.sw),
           hintText: hintText,
           hintStyle:
               TextStyle(color: subcolor.withOpacity(0.5), fontSize: 15.sp),

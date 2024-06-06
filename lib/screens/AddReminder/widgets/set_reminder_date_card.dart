@@ -1,4 +1,4 @@
-import 'package:fastlink_reminder/Model/reminder_date.dart';
+import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/drop_down_button.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class SetReminderDateCard extends StatefulWidget {
   const SetReminderDateCard({
     super.key,
-    required this.reminderDate,
+    required this.schedule,
     required this.onTap,
     required this.showError,
   });
-  final ReminderDate reminderDate;
+  final Schedules schedule;
   final void Function() onTap;
   final bool showError;
   @override
@@ -29,7 +29,7 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
       height: 125.h,
       decoration: widget.showError
           ? BoxDecoration(
-              color: widget.reminderDate.number == 0
+              color: widget.schedule.amount == 0
                   ? Colors.red[500]!.withOpacity(0.3)
                   : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
@@ -68,12 +68,12 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
             children: [
               CustomeDropDown(
                 items: List.generate(
-                    calculateLengthOfTheList(widget.reminderDate.type),
+                    calculateLengthOfTheList(widget.schedule.unit!),
                     (index) => "${index + 1}"),
-                label: widget.reminderDate.type,
-                selectedItem: widget.reminderDate.number.toString(),
+                label: widget.schedule.unit!,
+                selectedItem: widget.schedule.amount.toString(),
                 onChaned: (v) {
-                  widget.reminderDate.number = int.parse(v);
+                  widget.schedule.amount = int.parse(v);
                   // print(
                   //   widget.reminderDate.claculateDays(
                   //       widget.reminderDate.type, widget.reminderDate.number),
@@ -86,12 +86,12 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
               ),
               CustomeDropDown(
                   onChaned: (v) {
-                    widget.reminderDate.type = v.toString();
+                    widget.schedule.unit = v.toString();
                     setState(() {});
                   },
                   items: items,
                   label: "Type",
-                  selectedItem: widget.reminderDate.type),
+                  selectedItem: widget.schedule.unit),
             ],
           ),
 

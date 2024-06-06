@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:fastlink_reminder/Services/service.dart';
 import 'package:fastlink_reminder/links.dart';
 import 'package:fastlink_reminder/model/user.dart';
@@ -10,6 +9,7 @@ import 'package:http/http.dart' as http;
 class AuthProvider extends ChangeNotifier {
   bool showPassword = false;
   bool checkBoxValue = false;
+  late User user;
   final apiServices = ApiServices();
 
   String? validationFunction(String? value, int miniLentgh, int maxLentgh) {
@@ -45,7 +45,7 @@ class AuthProvider extends ChangeNotifier {
       final user = User.fromJson(result);
       print(user.userData!.name);
       return null;
-    } 
+    }
     return result['message'];
   }
 
@@ -80,7 +80,11 @@ class AuthProvider extends ChangeNotifier {
       'Accept': 'application/json'
     });
     final result = jsonDecode(response.body);
-    print(result);
+
+    if (result['user'] == null) {
+      return false;
+    }
+
     return true;
   }
 }//class
