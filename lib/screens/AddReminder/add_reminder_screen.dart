@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
+import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
@@ -11,44 +11,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
-class AddReminderScreen extends StatefulWidget {
-  const AddReminderScreen({super.key});
+class AddOrEditReminderScreen extends StatefulWidget {
+
+  const AddOrEditReminderScreen({super.key,  required this.appBarTitle, required this.reminder,});
+  final String appBarTitle;
+  final Reminder reminder;
 
   @override
-  State<AddReminderScreen> createState() => _AddReminderScreenState();
+  State<AddOrEditReminderScreen> createState() => _AddOrEditReminderScreenState();
 }
 
-class _AddReminderScreenState extends State<AddReminderScreen> {
-  final TextEditingController titleController = TextEditingController();
-
-  DateTime? selectExpierationDate;
-
-  Future<void> pickDate(BuildContext context) async {
-    selectExpierationDate = await showDatePicker(
+class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
+  _AddOrEditReminderScreenState();
+late  Reminder editOrNewReminder;
+late  Reminder _reminder;
+  bool haveErrorInScheduler = false;
+  bool selectExpirationDateHaveError = false;
+  final formkey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    editOrNewReminder.copyWith(title:widget.reminder.title ,description: widget.reminder.description,triggerAt:widget.reminder.triggerAt ,schedules:widget.reminder.schedules );
+    _reminder.copyWith(title:widget.reminder.title ,description: widget.reminder.description,triggerAt:widget.reminder.triggerAt ,schedules:widget.reminder.schedules );
+  }
+  @override
+  Widget build(BuildContext context) {
+     final TextEditingController titleController = TextEditingController(text:editOrNewReminder.title);
+  final TextEditingController descriptionController = TextEditingController(text:editOrNewReminder.description);
+    Future<void> pickDate(BuildContext context) async {
+    editOrNewReminder.triggerAt= await showDatePicker(
       context: context,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 3650)),
       initialDate: DateTime.now(),
     );
-    selectexpirationDateHaveError = false;
-    setState(() {});
+    selectExpirationDateHaveError=false;
+    setState(() {
+      
+    });
   }
-
-  List<Schedules> schedules = [
-    Schedules(amount: 0, unit: "day"),
-  ];
-  bool selectexpirationDateHaveError = false;
-  bool haveError = false;
-  final formkey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         //AppBar
         appBar: AppBar(
+          leading: IconButton(onPressed: (){
+            Navigator.pop(context);
+          }, icon: const Icon(Icons.arrow_back,color: Colors.white,)),
           title: Text(
-            'Add Reminder',
+            '${widget.appBarTitle} Reminder',
             style: Theme.of(context)
                 .typography
                 .englishLike
@@ -61,6 +72,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
           centerTitle: true,
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
+          
         ),
 
         //bodyyyyyyyyyyyyyyyyyyyyyyyyyyy
@@ -74,6 +86,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
               child: Column(
                 children: [
                   //user set reminder Title in this text field
+                 
                   CustomeTextField(
                     controller: titleController,
                     validatorFunction: (v) {
@@ -89,13 +102,30 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                       color: subcolor.withOpacity(0.4),
                     ),
                   ),
+                 
+                  CustomeTextField(
+                    controller: descriptionController,
+                    isDescriptionTextForm: true,
+                    validatorFunction: (v) {
+                      return context
+                          .read<AuthProvider>()
+                          .validationFunction(v, 5, 255);
+                    },
+                    label: 'Reminder Description',
+                    hintText: 'Enter Reminder Description',
+                    prefixIcon: Icon(
+                      Icons.description,
+                      size: 20.r,
+                      color: subcolor.withOpacity(0.4),
+                    ),
+                  ),
 
-                  //in this comment code user pick a expieration date
+                  //in this section code user pick a expieration date   
                   Padding(
                     padding: EdgeInsets.all(10.r),
                     child: Row(
                       children: [
-                        if (selectexpirationDateHaveError)
+                        if (selectExpirationDateHaveError)
                           Icon(
                             Icons.error_outline,
                             color: Colors.red.shade700,
@@ -106,7 +136,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (selectExpierationDate == null)
+                            if (editOrNewReminder.triggerAt == null)
                               Padding(
                                   padding:
                                       EdgeInsets.only(top: 5.h, left: 5.w)),
@@ -119,9 +149,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                                   .bodyLarge!
                                   .copyWith(color: Colors.black),
                             ),
-                            if (selectExpierationDate != null)
+                            if (editOrNewReminder.triggerAt != null)
                               Text(
-                                  "${selectExpierationDate!.day}-${selectExpierationDate!.month}-${selectExpierationDate!.year}"),
+                                  "${editOrNewReminder.triggerAt!.day}-${editOrNewReminder.triggerAt!.month}-${editOrNewReminder.triggerAt!.year}"),
                           ],
                         ),
                         const Spacer(),
@@ -130,7 +160,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                           borderRadius: BorderRadius.all(
                             Radius.circular(15.r),
                           ),
-                          padding: EdgeInsets.all(10.r),
+                          padding: EdgeInsets.all(15.r),
                           child: const Text('Pick Date'),
                           onPressed: () async {
                             await pickDate(context);
@@ -140,9 +170,9 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     ),
                   ),
 
-                  //in this section code we have only reminders text and reminder add button to add reminders
+                  //in this section code we have only context.watch<AddReminderProvider>().editOrNewReminders text and reminder add button to add reminders
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding:  EdgeInsets.all(10.0.r),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -153,11 +183,13 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            schedules.add(
-                              Schedules(amount: 1, unit: "day"),
+                            editOrNewReminder.schedules.add(
+                            Schedule(amount: 1, unit: "day"),
                             );
-                            haveError = false;
-                            setState(() {});
+                          haveErrorInScheduler=false;
+                          setState(() {
+                            
+                          });
                           },
                           child: CircleAvatar(
                             backgroundColor: primaryColor,
@@ -177,22 +209,25 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                     ),
                   ),
 
-                  Padding(
-                    padding: EdgeInsets.all(10.h),
-                    child: Column(
-                      children: [
-                        for (int i = 0; i < schedules.length; i++)
-                          SetReminderDateCard(
-                            schedule: schedules[i],
-                            onTap: () {
-                              schedules.remove(schedules[i]);
-                              setState(() {});
-                            },
-                            showError: haveError,
-                          ),
-                      ],
+              Padding(
+                      padding: EdgeInsets.all(10.h),
+                      child: Column(
+                        children: [
+                          for (int i = 0; i < editOrNewReminder.schedules.length; i++)
+                            SetSchedulerCard(
+                              schedule: editOrNewReminder.schedules[i],
+                              onDeleteTap: () {
+                              editOrNewReminder.schedules.remove(editOrNewReminder.schedules[i]);
+                              setState(() {
+                                
+                              });
+                                                          },
+                              showError: haveErrorInScheduler,
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
+                  
                 ],
               ),
             ),
@@ -206,16 +241,25 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
             onPressed: () {
+              if(editOrNewReminder==_reminder){
+                print('yes');
+                print(editOrNewReminder.triggerAt );
+                print('///////////////////');
+                print(_reminder);
+              }else{
+                print('no');
+              }
               if (formkey.currentState!.validate()) {
-                if (selectExpierationDate == null) {
-                  selectexpirationDateHaveError = true;
-                  setState(() {});
+                if (editOrNewReminder.triggerAt == null) {
+                  selectExpirationDateHaveError=true;
+                  setState(() {
+                    
+                  });
                   return;
                 }
-                for (var element in schedules) {
+                for (var element in editOrNewReminder.schedules) {
                   if (element.amount == 0) {
-                    haveError = true;
-                    setState(() {});
+                    haveErrorInScheduler=true;
                     return;
                   }
                 }

@@ -121,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           width: 40.w,
                           height: 40.w,
                           child: Checkbox(
-                            value: context.watch<AuthProvider>().checkBoxValue,
+                            value: context.watch<AuthProvider>().keepMeSignInButton,
                             side: BorderSide(
                                 strokeAlign: 2.r, color: primaryColor),
                             shape: const CircleBorder(),
@@ -130,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             onChanged: (value) {
                               context
                                   .read<AuthProvider>()
-                                  .changeCheckBoxValue();
+                                  .changekeepMeSignInButton();
                             },
                           ),
                         ),
@@ -145,9 +145,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   //login Button
                   ElevatedButton(
                     onPressed: () async {
-                      if (context
+                      if (!context
                           .read<AuthProvider>()
-                          .checkEmail(emailController.text)) {}
+                          .validEmail(emailController.text)) {
+                            return;
+                          }
                       //check validation
                       if (!_formKey.currentState!.validate()) {
                         return;
@@ -155,6 +157,8 @@ class _SignInScreenState extends State<SignInScreen> {
 
                       //show loading dialog
                       await showLoadiongDialog(context);
+                      
+                      //
                       var result = await context
                           .read<AuthProvider>()
                           .signInMethod(

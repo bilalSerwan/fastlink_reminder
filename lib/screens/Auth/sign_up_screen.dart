@@ -106,9 +106,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   //signUp Button
                   ElevatedButton(
                     onPressed: () async {
-                      if (context
+                      if (!context
                           .read<AuthProvider>()
-                          .checkEmail(emailController.text)) {}
+                          .validEmail(emailController.text)) {
+                            return;
+                          }
                       if (!_formKey.currentState!.validate()) {
                         return;
                       }

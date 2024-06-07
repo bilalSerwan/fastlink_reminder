@@ -4,13 +4,13 @@ import 'package:fastlink_reminder/links.dart';
 import 'package:http/http.dart' as http;
 
 class ApiServices {
-  Future userLogin({required String email, required String password}) async {
+  Future loginUser({required String email, required String password, required String fcm_token}) async {
     final response = await http.post(
         headers: {
           'Accept': 'application/json',
         },
         Uri.parse(loginApi),
-        body: {'email': email, 'password': password});
+        body: {'email': email, 'password': password,'fcm_token':fcm_token});
     print(jsonDecode(response.body));
     return jsonDecode(response.body);
   }

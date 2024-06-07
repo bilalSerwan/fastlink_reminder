@@ -4,48 +4,6 @@ import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomeDropDownButton extends StatefulWidget {
-  CustomeDropDownButton({super.key, required this.items, this.selectedValue});
-  final List items;
-  String? selectedValue;
-  @override
-  State<CustomeDropDownButton> createState() => _CustomeDropDownButtonState();
-}
-
-class _CustomeDropDownButtonState extends State<CustomeDropDownButton> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(2.h),
-      decoration: BoxDecoration(
-        color: Colors.lightBlue[100],
-        borderRadius: BorderRadius.circular(15),
-      ),
-      width: 150.w,
-      height: 50.h,
-      child: Center(
-        child: DropdownButton(
-          isExpanded: true,
-          underline: const SizedBox(),
-          padding: EdgeInsets.all(5.w),
-          items: widget.items
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e),
-                  ))
-              .toList(),
-          onChanged: (v) {
-            setState(() {
-              widget.selectedValue = v!.toString();
-            });
-          },
-          value: widget.selectedValue,
-          borderRadius: BorderRadius.circular(15),
-        ),
-      ),
-    );
-  }
-}
 
 class CustomeDropDown extends StatelessWidget {
   CustomeDropDown(

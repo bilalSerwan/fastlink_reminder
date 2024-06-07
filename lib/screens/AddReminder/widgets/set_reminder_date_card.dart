@@ -4,32 +4,27 @@ import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SetReminderDateCard extends StatefulWidget {
-  const SetReminderDateCard({
+class SetSchedulerCard extends StatelessWidget {
+  const SetSchedulerCard({
     super.key,
     required this.schedule,
-    required this.onTap,
+    required this.onDeleteTap,
     required this.showError,
   });
-  final Schedules schedule;
-  final void Function() onTap;
+  final Schedule schedule;
+  final void Function() onDeleteTap;
   final bool showError;
   @override
-  State<SetReminderDateCard> createState() => _SetReminderDateCardState();
-}
-
-class _SetReminderDateCardState extends State<SetReminderDateCard> {
-  @override
   Widget build(BuildContext context) {
-    List items = ["Day", "Week", "Month"];
+    List units = ["Hour","Day", "Week", "Month"];
     return Container(
       padding: EdgeInsets.all(7.w),
       margin: EdgeInsets.all(3.w),
       width: 0.92.sw,
       height: 125.h,
-      decoration: widget.showError
+      decoration: showError
           ? BoxDecoration(
-              color: widget.schedule.amount == 0
+              color: schedule.amount == 0
                   ? Colors.red[500]!.withOpacity(0.3)
                   : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
@@ -45,7 +40,7 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
                 style: subtitle,
               ),
               InkWell(
-                onTap: widget.onTap,
+                onTap: onDeleteTap,
                 highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
                 child: CircleAvatar(
@@ -68,17 +63,12 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
             children: [
               CustomeDropDown(
                 items: List.generate(
-                    calculateLengthOfTheList(widget.schedule.unit!),
+                    calculateLengthOfTheList(schedule.unit!),
                     (index) => "${index + 1}"),
-                label: widget.schedule.unit!,
-                selectedItem: widget.schedule.amount.toString(),
+                label: schedule.unit!,
+                selectedItem: schedule.amount.toString(),
                 onChaned: (v) {
-                  widget.schedule.amount = int.parse(v);
-                  // print(
-                  //   widget.reminderDate.claculateDays(
-                  //       widget.reminderDate.type, widget.reminderDate.number),
-                  // );
-                  setState(() {});
+                  schedule.amount = int.parse(v);
                 },
               ),
               SizedBox(
@@ -86,21 +76,13 @@ class _SetReminderDateCardState extends State<SetReminderDateCard> {
               ),
               CustomeDropDown(
                   onChaned: (v) {
-                    widget.schedule.unit = v.toString();
-                    setState(() {});
+                    schedule.unit = v.toString();
                   },
-                  items: items,
-                  label: "Type",
-                  selectedItem: widget.schedule.unit),
+                  items: units,
+                  label: "Unit",
+                  selectedItem: schedule.unit),
             ],
           ),
-
-          //dwayy agar waxt habw zead dakayn
-          // SizedBox(
-          //   height: 5.h,
-          // ),
-          // Text(
-          //     "We Reminder You In ${reminderDates[i].date!.day}-${reminderDates[i].date!.month}-${reminderDates[i].date!.year}"),
         ],
       ),
     );

@@ -1,4 +1,6 @@
 import 'package:fastlink_reminder/Provider/home_provider.dart';
+import 'package:fastlink_reminder/model/reminder.dart';
+import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/home/widgets/reminder_card.dart';
@@ -18,10 +20,12 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         onPressed: () {
+          //create new Reminder .......................
+          
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const AddReminderScreen(),
+              builder: (context) =>  AddOrEditReminderScreen(appBarTitle: 'Add',reminder: Reminder(title: '',description: '',triggerAt: DateTime.tryParse(''),schedules: [Schedule(amount: 1, unit: "Hour")]),),
             ),
           );
         },
@@ -36,25 +40,28 @@ class HomeScreen extends StatelessWidget {
         ),
         centerTitle: true,
         backgroundColor: primaryColor,
-        actions: [IconButton(onPressed: (){
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>SignInScreen()), (route) => false);
-        }, icon: Icon(Icons.logout,color: Colors.white,)),],
+        actions: [
+          IconButton(onPressed: (){
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SignInScreen()), (route) => false);
+        }, icon: const Icon(Icons.logout,color: Colors.white,),),],
       ),
+      
+      
       body: Container(
         width: 1.sw,
         height: 1.sh,
         padding: EdgeInsets.all(10.r),
         child: ListView.builder(
-          itemCount: 5,
+          itemCount: context.watch<HomeProvider>().reminders.length,
           itemBuilder: (context, index) => ReminderCard(
             deleteButtonPressed: () {
               context.read<HomeProvider>().deleteReminder();
             },
             editButtonPressed: () {
-              context.read<HomeProvider>().editReminder();
-            },
-            reminderTitle: 'Reminder $index',
-            expirationDate: 'Expiers After $index Months',
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=>  AddOrEditReminderScreen(appBarTitle: 'Edit',reminder: context.watch<HomeProvider>().reminders[index],),),);
+                        },
+            reminderTitle: context.watch<HomeProvider>().reminders[index].title?? 'have error please restart the app',
+            expirationDate: context.watch<HomeProvider>().reminders[index].triggerAt.toString(),
           ),
         ),
       ),

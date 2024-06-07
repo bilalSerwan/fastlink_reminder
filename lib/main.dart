@@ -1,5 +1,7 @@
+import 'package:fastlink_reminder/Provider/add_reminder_provider.dart';
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
+import 'package:fastlink_reminder/Services/firebase_api.dart';
 import 'package:fastlink_reminder/firebase_options.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FireBaseAPI().initializeNotification();
   sharedPreferences = await SharedPreferences.getInstance();
   runApp(
     const MyApp(),
@@ -30,11 +33,12 @@ class MyApp extends StatelessWidget {
           MediaQuery.sizeOf(context).width, MediaQuery.sizeOf(context).height),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (_, child) {
+      builder: (context, child) {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (context) => AuthProvider()),
-            ChangeNotifierProvider(create: (context) => HomeProvider())
+            ChangeNotifierProvider(create: (context) => HomeProvider()),
+            ChangeNotifierProvider(create: (context) => AddReminderProvider()),
           ],
           child: const MaterialApp(
             debugShowCheckedModeBanner: false,

@@ -1,14 +1,17 @@
 import 'dart:convert';
 import 'dart:developer';
+
+import 'package:fastlink_reminder/Services/firebase_api.dart';
 import 'package:fastlink_reminder/Services/service.dart';
 import 'package:fastlink_reminder/links.dart';
+import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class AuthProvider extends ChangeNotifier {
   bool showPassword = false;
-  bool checkBoxValue = false;
+  bool keepMeSignInButton = false;
   late User user;
   final apiServices = ApiServices();
 
@@ -31,38 +34,41 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeCheckBoxValue() {
-    checkBoxValue = !checkBoxValue;
+  void changekeepMeSignInButton() {
+    keepMeSignInButton = !keepMeSignInButton;
     notifyListeners();
   }
+
+  
 
   Future<String?> signInMethod(
       {required String email, required String password}) async {
     log("email => $email ,,, password => $password");
-    final result =
-        await apiServices.userLogin(email: email, password: password);
+    
+    String? fcm_token = await FireBaseAPI().getFCMToken();
+    if(fcm_token==null) { return'';}
+    final result = await apiServices.loginUser(email: email, password: password,fcm_token:fcm_token);
+    sharedPreferences.setString("fcm_token", fcm_token);
     if (result['message'] == null) {
-      final user = User.fromJson(result);
+      user = User.fromJson(result);
       print(user.userData!.name);
+        print('fcm_token =========${sharedPreferences.getString("fcm_token")}');
+      if(keepMeSignInButton){
+        sharedPreferences.setString("user_token", user.accessToken!);
+        print('user token =========${sharedPreferences.getString("user_token")}');
+      }
       return null;
-    }
+    } 
     return result['message'];
   }
 
   Future<String> signUpMethod(
       {required String email, required String fullName}) async {
-    log('email ======> $email |||| fullName ======> $fullName');
     final result = await apiServices.sendEmail(email: email, name: fullName);
-    log("Result ===================>>>>>>>>>>$result");
     return result['message'];
   }
 
-  Future addReminder() async {
-    log('add reminder ==============================>');
-    apiServices.addReminder();
-  }
-
-  bool checkEmail(String email) {
+  bool validEmail(String email) {
     print(email);
     final regExPattern = RegExp("^[a-zA-Z.][a-zA-Z0-9.]*\$");
     if (regExPattern.hasMatch(email)) {
@@ -75,17 +81,25 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> checkTokenExpiered(String token) async {
+    late final result;
+    try{
     var response = await http.get(Uri.parse(checktokenApi), headers: {
       'Authorization': 'Bearer $token',
       'Accept': 'application/json'
     });
-    final result = jsonDecode(response.body);
-
-    if (result['user'] == null) {
-      return false;
+     result = jsonDecode(response.body);
+    print(result);
+    }catch(e){
+      print(e.toString());
     }
+    if(result['user']!=null){
+      user=User.fromJson(result['user']);
+      return false;
+    }else{
+      return true;
+    }
+    
+      }//checkTokenExpiered-method
 
-    return true;
-  }
 }//class
 
