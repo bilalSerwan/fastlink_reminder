@@ -7,3 +7,6 @@ String registerApi = '$devBaseUrl/api/register';
 String loginApi = '$devBaseUrl/api/login';
 String logOutApi = '$devBaseUrl/api/log_out';
 String addReminderApi = '$devBaseUrl/api/reminders';
+String fetchAllReminders ='$devBaseUrl/api/reminders'; 
+String fetchOneReminder = '$devBaseUrl/api/reminders';
+String updateReminder = '$devBaseUrl/api/reminders';

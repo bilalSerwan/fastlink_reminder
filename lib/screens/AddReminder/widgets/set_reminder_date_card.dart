@@ -1,5 +1,6 @@
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/drop_down_button.dart';
+import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,9 +15,12 @@ class SetSchedulerCard extends StatelessWidget {
   final Schedule schedule;
   final void Function() onDeleteTap;
   final bool showError;
+
   @override
   Widget build(BuildContext context) {
-    List units = ["Hour","Day", "Week", "Month"];
+    final TextEditingController controller =
+        TextEditingController(text: schedule.amount.toString());
+    List units = ["hour", "day", "week", "month"];
     return Container(
       padding: EdgeInsets.all(7.w),
       margin: EdgeInsets.all(3.w),
@@ -61,15 +65,40 @@ class SetSchedulerCard extends StatelessWidget {
           ),
           Row(
             children: [
-              CustomeDropDown(
-                items: List.generate(
-                    calculateLengthOfTheList(schedule.unit!),
-                    (index) => "${index + 1}"),
-                label: schedule.unit!,
-                selectedItem: schedule.amount.toString(),
-                onChaned: (v) {
-                  schedule.amount = int.parse(v);
+              TextFormField(
+                autocorrect: false,
+                controller: controller,
+                validator: (value) {
+                  return null;
                 },
+                onChanged: (value) {
+                  int number;
+                  try {
+                    number = int.parse(value == "" ? "0" : value.trim());
+                  } catch (e) {
+                    print(e);
+                    number = 0;
+                    showAlertDialog(
+                        context, 'please only enter number in amount field');
+                  }
+                  if (number > 0 && number <= 255) {
+                    schedule.amount = number;
+                    controller.text = number.toString();
+                  } else {
+                    showAlertDialog(
+                        context, 'the amount value must be between 0-255');
+                  }
+                },
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  label: const Text('amount'),
+                  constraints: BoxConstraints(maxWidth: 100.w),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20.r),
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 width: 10.w,
@@ -79,27 +108,12 @@ class SetSchedulerCard extends StatelessWidget {
                     schedule.unit = v.toString();
                   },
                   items: units,
-                  label: "Unit",
+                  label: 'Unit',
                   selectedItem: schedule.unit),
             ],
           ),
         ],
       ),
     );
-  }
-}
-
-int calculateLengthOfTheList(String type) {
-  switch (type) {
-    case "Day":
-      return 31;
-    case "Week":
-      return 52;
-    case "Month":
-      return 12;
-    case "Year":
-      return 10;
-    default:
-      return 21;
   }
 }

@@ -10,10 +10,10 @@ class Reminder extends Equatable {
         required this.schedules,
     });
 
-    final String? title;
-    final String? description;
+     String? title;
+     String? description;
      DateTime? triggerAt;
-    final List<Schedule> schedules;
+     List<Schedule> schedules;
 
     Reminder copyWith({
         String? title,

@@ -1,5 +1,8 @@
 // ignore_for_file: must_be_immutable
+import 'dart:developer';
+
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
+import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
@@ -12,52 +15,69 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class AddOrEditReminderScreen extends StatefulWidget {
-
-  const AddOrEditReminderScreen({super.key,  required this.appBarTitle, required this.reminder,});
+  const AddOrEditReminderScreen({
+    super.key,
+    required this.appBarTitle,
+    required this.reminder,
+  });
   final String appBarTitle;
   final Reminder reminder;
 
   @override
-  State<AddOrEditReminderScreen> createState() => _AddOrEditReminderScreenState();
+  State<AddOrEditReminderScreen> createState() =>
+      _AddOrEditReminderScreenState();
 }
 
 class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
   _AddOrEditReminderScreenState();
-late  Reminder editOrNewReminder;
-late  Reminder _reminder;
+  late Reminder previousReminder;
   bool haveErrorInScheduler = false;
   bool selectExpirationDateHaveError = false;
   final formkey = GlobalKey<FormState>();
+  List<Schedule> schedules = [Schedule(amount: 1, unit: 'Hour')];
+  DateTime? triggerAt;
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    editOrNewReminder.copyWith(title:widget.reminder.title ,description: widget.reminder.description,triggerAt:widget.reminder.triggerAt ,schedules:widget.reminder.schedules );
-    _reminder.copyWith(title:widget.reminder.title ,description: widget.reminder.description,triggerAt:widget.reminder.triggerAt ,schedules:widget.reminder.schedules );
+    previousReminder = Reminder(
+        title: widget.reminder.title,
+        description: widget.reminder.description,
+        triggerAt: widget.reminder.triggerAt,
+        schedules: widget.reminder.schedules);
+
+    schedules = previousReminder.schedules;
+    triggerAt = previousReminder.triggerAt;
+    titleController.text = previousReminder.title ?? '';
+    descriptionController.text = previousReminder.description ?? '';
   }
+
   @override
   Widget build(BuildContext context) {
-     final TextEditingController titleController = TextEditingController(text:editOrNewReminder.title);
-  final TextEditingController descriptionController = TextEditingController(text:editOrNewReminder.description);
     Future<void> pickDate(BuildContext context) async {
-    editOrNewReminder.triggerAt= await showDatePicker(
-      context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 3650)),
-      initialDate: DateTime.now(),
-    );
-    selectExpirationDateHaveError=false;
-    setState(() {
-      
-    });
-  }
+      triggerAt = await showDatePicker(
+        context: context,
+        firstDate: DateTime.now(),
+        lastDate: DateTime.now().add(const Duration(days: 3650)),
+        initialDate: DateTime.now(),
+      );
+      selectExpirationDateHaveError = false;
+      setState(() {});
+    }
+
     return SafeArea(
       child: Scaffold(
         //AppBar
         appBar: AppBar(
-          leading: IconButton(onPressed: (){
-            Navigator.pop(context);
-          }, icon: const Icon(Icons.arrow_back,color: Colors.white,)),
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back,
+                color: Colors.white,
+              )),
           title: Text(
             '${widget.appBarTitle} Reminder',
             style: Theme.of(context)
@@ -72,7 +92,6 @@ late  Reminder _reminder;
           centerTitle: true,
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          
         ),
 
         //bodyyyyyyyyyyyyyyyyyyyyyyyyyyy
@@ -85,8 +104,6 @@ late  Reminder _reminder;
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  //user set reminder Title in this text field
-                 
                   CustomeTextField(
                     controller: titleController,
                     validatorFunction: (v) {
@@ -102,7 +119,7 @@ late  Reminder _reminder;
                       color: subcolor.withOpacity(0.4),
                     ),
                   ),
-                 
+
                   CustomeTextField(
                     controller: descriptionController,
                     isDescriptionTextForm: true,
@@ -120,7 +137,7 @@ late  Reminder _reminder;
                     ),
                   ),
 
-                  //in this section code user pick a expieration date   
+                  //in this section code user pick a expieration date
                   Padding(
                     padding: EdgeInsets.all(10.r),
                     child: Row(
@@ -136,7 +153,7 @@ late  Reminder _reminder;
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if (editOrNewReminder.triggerAt == null)
+                            if (triggerAt == null)
                               Padding(
                                   padding:
                                       EdgeInsets.only(top: 5.h, left: 5.w)),
@@ -149,9 +166,9 @@ late  Reminder _reminder;
                                   .bodyLarge!
                                   .copyWith(color: Colors.black),
                             ),
-                            if (editOrNewReminder.triggerAt != null)
+                            if (triggerAt != null)
                               Text(
-                                  "${editOrNewReminder.triggerAt!.day}-${editOrNewReminder.triggerAt!.month}-${editOrNewReminder.triggerAt!.year}"),
+                                  "${triggerAt!.day}-${triggerAt!.month}-${triggerAt!.year}"),
                           ],
                         ),
                         const Spacer(),
@@ -170,9 +187,9 @@ late  Reminder _reminder;
                     ),
                   ),
 
-                  //in this section code we have only context.watch<AddReminderProvider>().editOrNewReminders text and reminder add button to add reminders
+                  //in this section code we have only reminder text and reminder add button to add reminders
                   Padding(
-                    padding:  EdgeInsets.all(10.0.r),
+                    padding: EdgeInsets.all(10.0.r),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -183,23 +200,21 @@ late  Reminder _reminder;
                         ),
                         InkWell(
                           onTap: () {
-                            editOrNewReminder.schedules.add(
-                            Schedule(amount: 1, unit: "day"),
+                            schedules.add(
+                              Schedule(amount: 0, unit: "day"),
                             );
-                          haveErrorInScheduler=false;
-                          setState(() {
-                            
-                          });
+                            haveErrorInScheduler = false;
+                            setState(() {});
                           },
                           child: CircleAvatar(
                             backgroundColor: primaryColor,
-                            radius: 15,
+                            radius: 15.r,
                             child: CircleAvatar(
-                              radius: 13,
+                              radius: 13.r,
                               backgroundColor: Colors.white,
                               child: Icon(
                                 Icons.add,
-                                size: 20,
+                                size: 20.sp,
                                 color: primaryColor,
                               ),
                             ),
@@ -209,25 +224,22 @@ late  Reminder _reminder;
                     ),
                   ),
 
-              Padding(
-                      padding: EdgeInsets.all(10.h),
-                      child: Column(
-                        children: [
-                          for (int i = 0; i < editOrNewReminder.schedules.length; i++)
-                            SetSchedulerCard(
-                              schedule: editOrNewReminder.schedules[i],
-                              onDeleteTap: () {
-                              editOrNewReminder.schedules.remove(editOrNewReminder.schedules[i]);
-                              setState(() {
-                                
-                              });
-                                                          },
-                              showError: haveErrorInScheduler,
-                            ),
-                        ],
-                      ),
+                  Padding(
+                    padding: EdgeInsets.all(10.h),
+                    child: Column(
+                      children: [
+                        for (int i = 0; i < schedules.length; i++)
+                          SetSchedulerCard(
+                            schedule: schedules[i],
+                            onDeleteTap: () {
+                              schedules.remove(schedules[i]);
+                              setState(() {});
+                            },
+                            showError: haveErrorInScheduler,
+                          ),
+                      ],
                     ),
-                  
+                  ),
                 ],
               ),
             ),
@@ -241,29 +253,31 @@ late  Reminder _reminder;
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
             onPressed: () {
-              if(editOrNewReminder==_reminder){
-                print('yes');
-                print(editOrNewReminder.triggerAt );
-                print('///////////////////');
-                print(_reminder);
-              }else{
-                print('no');
-              }
               if (formkey.currentState!.validate()) {
-                if (editOrNewReminder.triggerAt == null) {
-                  selectExpirationDateHaveError=true;
-                  setState(() {
-                    
-                  });
+                if (triggerAt == null) {
+                  selectExpirationDateHaveError = true;
+                  setState(() {});
                   return;
                 }
-                for (var element in editOrNewReminder.schedules) {
+                for (var element in schedules) {
                   if (element.amount == 0) {
-                    haveErrorInScheduler=true;
+                    haveErrorInScheduler = true;
                     return;
                   }
                 }
-                return;
+                final newReminder = Reminder(
+                    title: titleController.text,
+                    description: descriptionController.text,
+                    triggerAt: triggerAt,
+                    schedules: schedules);
+                if (newReminder != previousReminder) {
+                  log('add reminder ...................');
+                  widget.appBarTitle == "Add"
+                      ? context.read<HomeProvider>().addReminder(newReminder)
+                      : context
+                          .read<HomeProvider>()
+                          .updateReminder(newReminder);
+                }
               }
             },
             child: Text(

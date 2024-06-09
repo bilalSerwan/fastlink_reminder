@@ -1,6 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:developer';
+
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
+import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -35,21 +38,27 @@ class _SplashScreenState extends State<SplashScreen> {
 }
 
 checkToken(BuildContext context) async {
-  final result = await AuthProvider()
-      .checkTokenExpiered('8|YwuQmBvWfNNR7FJ78kbMF2PrYuBmRKDFlaSADAhc3bff5d62');
-  if (result) {
+  final userToken = sharedPreferences.getString('user_token');
+  log('User_Token =======> $userToken');
+  if (userToken == null) {
     Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SignInScreen(),
-      ),
-    );
+        context, MaterialPageRoute(builder: (context) => const SignInScreen()));
   } else {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
-    );
+    final result = await AuthProvider().checkTokenExpiered(userToken);
+    if (result) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SignInScreen(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    }
   }
 }

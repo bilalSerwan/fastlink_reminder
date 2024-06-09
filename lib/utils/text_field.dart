@@ -14,7 +14,7 @@ class CustomeTextField extends StatelessWidget {
     this.suffixIcon,
     this.keyboardType = TextInputType.text,
     this.showPassword = false,
-    this.isDescriptionTextForm=false,
+    this.isDescriptionTextForm = false,
   });
 
   final TextEditingController controller;
@@ -32,8 +32,8 @@ class CustomeTextField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(10.r),
       child: TextFormField(
-        maxLines:isDescriptionTextForm? 8:1,
-        minLines: isDescriptionTextForm?1:null,
+        maxLines: isDescriptionTextForm ? 8 : 1,
+        minLines: isDescriptionTextForm ? 1 : null,
         validator: validatorFunction,
         obscureText: showPassword,
         autocorrect: false,
@@ -57,6 +57,7 @@ class CustomeTextField extends StatelessWidget {
           focusedBorder: customeOutlineInputBorder(borderColor: primaryColor),
           errorBorder: customeOutlineInputBorder(borderColor: Colors.red),
         ),
+        autofocus: false,
       ),
     );
   }

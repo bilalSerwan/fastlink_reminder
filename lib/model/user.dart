@@ -23,6 +23,7 @@ class UserData {
   int? id;
   String? name;
   String? email;
+  String? fcmToken;
   Null emailVerifiedAt;
   String? createdAt;
   String? updatedAt;
@@ -31,6 +32,7 @@ class UserData {
       {this.id,
       this.name,
       this.email,
+      this.fcmToken,
       this.emailVerifiedAt,
       this.createdAt,
       this.updatedAt});
@@ -39,6 +41,7 @@ class UserData {
     id = json['id'];
     name = json['name'];
     email = json['email'];
+    fcmToken = json['fcm_token'];
     emailVerifiedAt = json['email_verified_at'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
@@ -49,6 +52,7 @@ class UserData {
     data['id'] = id;
     data['name'] = name;
     data['email'] = email;
+    data['fcm_token'] = fcmToken;
     data['email_verified_at'] = emailVerifiedAt;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;

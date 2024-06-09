@@ -1,4 +1,6 @@
 import 'package:fastlink_reminder/Provider/home_provider.dart';
+import 'package:fastlink_reminder/Services/service.dart';
+import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
@@ -21,11 +23,18 @@ class HomeScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         onPressed: () {
           //create new Reminder .......................
-          
+
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  AddOrEditReminderScreen(appBarTitle: 'Add',reminder: Reminder(title: '',description: '',triggerAt: DateTime.tryParse(''),schedules: [Schedule(amount: 1, unit: "Hour")]),),
+              builder: (context) => AddOrEditReminderScreen(
+                appBarTitle: 'Add',
+                reminder: Reminder(
+                    title: '',
+                    description: '',
+                    triggerAt: DateTime.tryParse(''),
+                    schedules: [Schedule(amount: 0, unit: "Hour")]),
+              ),
             ),
           );
         },
@@ -41,29 +50,71 @@ class HomeScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: primaryColor,
         actions: [
-          IconButton(onPressed: (){
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SignInScreen()), (route) => false);
-        }, icon: const Icon(Icons.logout,color: Colors.white,),),],
+          IconButton(
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SignInScreen()),
+                  (route) => false);
+            },
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
-      
-      
       body: Container(
         width: 1.sw,
         height: 1.sh,
         padding: EdgeInsets.all(10.r),
-        child: ListView.builder(
-          itemCount: context.watch<HomeProvider>().reminders.length,
-          itemBuilder: (context, index) => ReminderCard(
-            deleteButtonPressed: () {
-              context.read<HomeProvider>().deleteReminder();
-            },
-            editButtonPressed: () {
-                            Navigator.push(context,MaterialPageRoute(builder: (context)=>  AddOrEditReminderScreen(appBarTitle: 'Edit',reminder: context.watch<HomeProvider>().reminders[index],),),);
+        child: FutureBuilder(
+            future: ApiServices()
+                .fetchData(sharedPreferences.getString('user_token')!),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.hasError) {
+                  return Center(
+                      child: Text('Error in fetching data ${snapshot.error}'));
+                } else {
+                  context.read<HomeProvider>().updateReminders(snapshot.data);
+                }
+              }
+              return snapshot.hasData
+                  ? ListView.builder(
+                      itemCount: context.watch<HomeProvider>().reminders.length,
+                      itemBuilder: (context, index) => ReminderCard(
+                        deleteButtonPressed: () {
+                          context.read<HomeProvider>().deleteReminder(
+                              context.watch<HomeProvider>().reminders[index]);
                         },
-            reminderTitle: context.watch<HomeProvider>().reminders[index].title?? 'have error please restart the app',
-            expirationDate: context.watch<HomeProvider>().reminders[index].triggerAt.toString(),
-          ),
-        ),
+                        editButtonPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddOrEditReminderScreen(
+                                appBarTitle: 'Edit',
+                                reminder: context
+                                    .watch<HomeProvider>()
+                                    .reminders[index],
+                              ),
+                            ),
+                          );
+                        },
+                        reminderTitle: context
+                                .watch<HomeProvider>()
+                                .reminders[index]
+                                .title ??
+                            'have error please restart the app',
+                        expirationDate: context
+                            .watch<HomeProvider>()
+                            .reminders[index]
+                            .triggerAt
+                            .toString(),
+                      ),
+                    )
+                  : const Center(child: CircularProgressIndicator());
+            }),
       ),
     );
   }

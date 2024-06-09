@@ -5,6 +5,7 @@ import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/loading_dialog.dart';
+import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/gestures.dart';
@@ -121,7 +122,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           width: 40.w,
                           height: 40.w,
                           child: Checkbox(
-                            value: context.watch<AuthProvider>().keepMeSignInButton,
+                            value: context
+                                .watch<AuthProvider>()
+                                .keepMeSignInButton,
                             side: BorderSide(
                                 strokeAlign: 2.r, color: primaryColor),
                             shape: const CircleBorder(),
@@ -145,28 +148,29 @@ class _SignInScreenState extends State<SignInScreen> {
                   //login Button
                   ElevatedButton(
                     onPressed: () async {
-                      if (!context
-                          .read<AuthProvider>()
-                          .validEmail(emailController.text)) {
-                            return;
-                          }
                       //check validation
                       if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
+                      if (!context
+                          .read<AuthProvider>()
+                          .validEmail(emailController.text.trim())) {
+                        showAlertDialog(context, 'Your Email is Invalid');
                         return;
                       }
 
                       //show loading dialog
                       await showLoadiongDialog(context);
-                      
+
                       //
-                      var result = await context
-                          .read<AuthProvider>()
-                          .signInMethod(
-                            email: '${emailController.text}@newroztelecom.com',
-                            password: passwordController.text,
-                          );
+                      var result =
+                          await context.read<AuthProvider>().signInMethod(
+                                email:
+                                    '${emailController.text.trim()}@newroztelecom.com',
+                                password: passwordController.text,
+                              );
                       Navigator.pop(context);
-                      if (result == null) {
+                      if (result == 'Successful') {
                         emailController.clear();
                         passwordController.clear();
                         Navigator.pushAndRemoveUntil(
@@ -177,43 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           (route) => false,
                         );
                       } else {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Center(
-                                child: Container(
-                                  padding: EdgeInsets.all(15.w),
-                                  width: 0.9.sw,
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(20.r))),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '$result please Login',
-                                        textAlign: TextAlign.center,
-                                        style: subtitle.copyWith(
-                                            decoration: TextDecoration.none),
-                                      ),
-                                      SizedBox(
-                                        height: 10.h,
-                                      ),
-                                      OutlinedButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: const Text('OK'),
-                                      ),
-                                      SizedBox(
-                                        height: 5.h,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            });
+                        showAlertDialog(context, result);
                       }
                     },
                     style: ButtonStyle(

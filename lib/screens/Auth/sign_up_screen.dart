@@ -4,6 +4,7 @@ import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/loading_dialog.dart';
+import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/gestures.dart';
@@ -27,7 +28,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     emailController.dispose();
     fullNameController.dispose();
@@ -106,12 +106,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   //signUp Button
                   ElevatedButton(
                     onPressed: () async {
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
                       if (!context
                           .read<AuthProvider>()
-                          .validEmail(emailController.text)) {
-                            return;
-                          }
-                      if (!_formKey.currentState!.validate()) {
+                          .validEmail(emailController.text.trim())) {
+                        showAlertDialog(context, 'Invalid Email');
                         return;
                       }
 
@@ -121,52 +122,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           .read<AuthProvider>()
                           .signUpMethod(
                               email:
-                                  '${emailController.text}+@newroztelecom.com',
+                                  '${emailController.text.trim()}@newroztelecom.com',
                               fullName: fullNameController.text);
                       Navigator.pop(context);
                       emailController.clear();
                       fullNameController.clear();
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Center(
-                              child: Container(
-                                padding: EdgeInsets.all(15.w),
-                                width: 0.9.sw,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(20.r))),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      '$result please Login',
-                                      textAlign: TextAlign.center,
-                                      style: subtitle.copyWith(
-                                          decoration: TextDecoration.none),
-                                    ),
-                                    SizedBox(
-                                      height: 10.h,
-                                    ),
-                                    OutlinedButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const SignInScreen()));
-                                      },
-                                      child: const Text('OK'),
-                                    ),
-                                    SizedBox(
-                                      height: 5.h,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          });
+                      showAlertDialog(context, result);
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(primaryColor),
