@@ -105,5 +105,13 @@ class AuthProvider extends ChangeNotifier {
     }
     return false;
   } //checkTokenExpiered-method
+
+  Future logOutUser()async{
+    String userToken = sharedPreferences.getString('user_token')!;
+    final result = await apiServices.userLogOut(userToken);
+    print(result);
+    print(await sharedPreferences.clear());
+    log('log out muthod runned ............................');
+  }
 }//class
 

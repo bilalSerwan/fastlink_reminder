@@ -45,7 +45,8 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
         title: widget.reminder.title,
         description: widget.reminder.description,
         triggerAt: widget.reminder.triggerAt,
-        schedules: widget.reminder.schedules);
+        schedules: widget.reminder.schedules,
+        );
 
     schedules = previousReminder.schedules;
     triggerAt = previousReminder.triggerAt;

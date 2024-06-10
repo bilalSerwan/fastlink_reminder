@@ -2,6 +2,7 @@ import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/Services/firebase_api.dart';
 import 'package:fastlink_reminder/firebase_options.dart';
+import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/first_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -38,9 +39,9 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => HomeProvider()),
           ],
-          child: const MaterialApp(
+          child:  MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: SplashScreen(),
+            home: sharedPreferences.getString('user_token')==null?SignInScreen(): SplashScreen(),
           ),
         );
       },

@@ -5,7 +5,7 @@ import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SetSchedulerCard extends StatelessWidget {
+class SetSchedulerCard extends StatefulWidget {
   const SetSchedulerCard({
     super.key,
     required this.schedule,
@@ -17,18 +17,23 @@ class SetSchedulerCard extends StatelessWidget {
   final bool showError;
 
   @override
+  State<SetSchedulerCard> createState() => _SetSchedulerCardState();
+}
+
+class _SetSchedulerCardState extends State<SetSchedulerCard> {
+  @override
   Widget build(BuildContext context) {
     final TextEditingController controller =
-        TextEditingController(text: schedule.amount.toString());
+        TextEditingController(text: widget.schedule.amount.toString());
     List units = ["hour", "day", "week", "month"];
     return Container(
       padding: EdgeInsets.all(7.w),
       margin: EdgeInsets.all(3.w),
       width: 0.92.sw,
       height: 125.h,
-      decoration: showError
+      decoration: widget.showError
           ? BoxDecoration(
-              color: schedule.amount == 0
+              color: widget.schedule.amount == 0
                   ? Colors.red[500]!.withOpacity(0.3)
                   : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
@@ -44,7 +49,7 @@ class SetSchedulerCard extends StatelessWidget {
                 style: subtitle,
               ),
               InkWell(
-                onTap: onDeleteTap,
+                onTap: widget.onDeleteTap,
                 highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
                 child: CircleAvatar(
@@ -72,6 +77,7 @@ class SetSchedulerCard extends StatelessWidget {
                   return null;
                 },
                 onChanged: (value) {
+                  print(value);
                   int number;
                   try {
                     number = int.parse(value == "" ? "0" : value.trim());
@@ -81,9 +87,12 @@ class SetSchedulerCard extends StatelessWidget {
                     showAlertDialog(
                         context, 'please only enter number in amount field');
                   }
-                  if (number > 0 && number <= 255) {
-                    schedule.amount = number;
+                  if (number >= 0 && number <= 255) {
+                    widget.schedule.amount = number;
                     controller.text = number.toString();
+                    setState(() {
+                      
+                    });
                   } else {
                     showAlertDialog(
                         context, 'the amount value must be between 0-255');
@@ -105,11 +114,11 @@ class SetSchedulerCard extends StatelessWidget {
               ),
               CustomeDropDown(
                   onChaned: (v) {
-                    schedule.unit = v.toString();
+                    widget.schedule.unit = v.toString();
                   },
                   items: units,
                   label: 'Unit',
-                  selectedItem: schedule.unit),
+                  selectedItem: widget.schedule.unit),
             ],
           ),
         ],

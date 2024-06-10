@@ -42,6 +42,59 @@ class ApiServices {
     return {};
   }
 
+    checkTokenExpiered({required String token}) async {
+    try {
+      final response = await http.get(Uri.parse(checktokenApi), headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json'
+      });
+      print('response ================>${jsonDecode(response.body)}');
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('error in check token expiered =========>${e.toString()}');
+    }
+  }  
+
+    Future sendEmail({required String email, required String name}) async {
+    try {
+      final response = await http.post(
+          headers: {'Accept': 'application/json'},
+          Uri.parse(registerApi),
+          body: {
+            'name': name,
+            'email': email,
+          });
+      return jsonDecode(response.body);
+    } catch (e) {
+      print('Error in sending messege===>${e.toString()}');
+    }
+    return {};
+  }
+
+  Future userLogOut(String token)async{
+   final response= await http.post(Uri.parse(logOutApi),headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json'
+      });
+      print(jsonDecode(response.body));
+      return jsonDecode(response.body);
+  }
+
+
+
+  Future fetchData(String userToken) async {
+    try {
+      return http.get(Uri.parse(fetchAllReminders), headers: {
+        'Authorization': 'Bearer $userToken',
+        'Accept': 'application/json'
+      });
+    } catch (e) {
+      print('Error in fetching data============>${e.toString()}');
+    }
+    // print(jsonDecode(response.body));
+    // return jsonDecode(response.body);
+  }
+
   addReminder({required Reminder reminder, required String token}) async {
     List<Map<String, dynamic>> schedules = [];
     for (int i = 0; i < reminder.schedules.length; i++) {
@@ -52,7 +105,7 @@ class ApiServices {
     }
     // try {
     final response = await http.post(
-      Uri.parse(addReminderApi),
+      Uri.parse(updateReminder),
       headers: {
         'Authorization': 'Bearer $token',
         'Accept': 'application/json',
@@ -76,49 +129,30 @@ class ApiServices {
   }
   //add reminder method
 
-  editReminder() {}
-
-  deleteReminder() {}
-
-  Future sendEmail({required String email, required String name}) async {
-    try {
-      final response = await http.post(
-          headers: {'Accept': 'application/json'},
-          Uri.parse(registerApi),
-          body: {
-            'name': name,
-            'email': email,
-          });
-      return jsonDecode(response.body);
-    } catch (e) {
-      print('Error in sending messege===>${e.toString()}');
-    }
-    return {};
-  }
-
-  Future fetchData(String userToken) async {
-    try {
-      return http.get(Uri.parse(fetchAllReminders), headers: {
-        'Authorization': 'Bearer $userToken',
-        'Accept': 'application/json'
-      });
-    } catch (e) {
-      print('Error in fetching data============>${e.toString()}');
-    }
-    // print(jsonDecode(response.body));
-    // return jsonDecode(response.body);
-  }
-
-  checkTokenExpiered({required String token}) async {
-    try {
-      final response = await http.get(Uri.parse(checktokenApi), headers: {
+  editReminder(String token,Reminder reminder)async {
+     final response = await http.post(
+      Uri.parse(addReminderApi),
+      headers: {
         'Authorization': 'Bearer $token',
-        'Accept': 'application/json'
-      });
-      print('response ================>${jsonDecode(response.body)}');
-      return jsonDecode(response.body);
-    } catch (e) {
-      print('error in check token expiered =========>${e.toString()}');
-    }
+        'Accept': 'application/json',
+      },
+      body: {
+        "title": reminder.title,
+        "description": reminder.description,
+        "trigger_at": reminder.triggerAt!.toString(),
+        "schedules": [
+          {"amount": 4, "unit": "week"},
+          {"amount": 1, "unit": "day"}
+        ],
+      }, //body
+    ); //post
+    print(response);
   }
+
+  // deleteReminder() {}
+
+
+
+
+
 }

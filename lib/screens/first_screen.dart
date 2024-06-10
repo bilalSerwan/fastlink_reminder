@@ -40,11 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
 checkToken(BuildContext context) async {
   final userToken = sharedPreferences.getString('user_token');
   log('User_Token =======> $userToken');
-  if (userToken == null) {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const SignInScreen()));
-  } else {
-    final result = await AuthProvider().checkTokenExpiered(userToken);
+    final result = await AuthProvider().checkTokenExpiered(userToken!);
     if (result) {
       Navigator.pushReplacement(
         context,
@@ -60,5 +56,5 @@ checkToken(BuildContext context) async {
         ),
       );
     }
-  }
+  
 }

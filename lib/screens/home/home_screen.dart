@@ -1,3 +1,4 @@
+import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/Services/service.dart';
 import 'package:fastlink_reminder/main.dart';
@@ -52,6 +53,7 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
             onPressed: () {
+              context.read<AuthProvider>().logOutUser();
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const SignInScreen()),
