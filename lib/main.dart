@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
           ],
           child:  MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: sharedPreferences.getString('user_token')==null?SignInScreen(): SplashScreen(),
+            home: sharedPreferences.getString('user_token')==null?const SignInScreen():const SplashScreen(),
           ),
         );
       },

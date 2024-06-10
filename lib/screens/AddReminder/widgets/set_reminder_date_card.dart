@@ -71,34 +71,30 @@ class _SetSchedulerCardState extends State<SetSchedulerCard> {
           Row(
             children: [
               TextFormField(
-                autocorrect: false,
                 controller: controller,
                 validator: (value) {
                   return null;
                 },
-                onChanged: (value) {
+                onChanged: (value) {                
                   print(value);
                   int number;
                   try {
                     number = int.parse(value == "" ? "0" : value.trim());
+                  if (number > 0 && number <= 255) {
+                    widget.schedule.amount = number;
+                  } else {
+                    showAlertDialog(
+                        context, 'the amount value must be between 0-255');
+                  }
                   } catch (e) {
                     print(e);
                     number = 0;
                     showAlertDialog(
                         context, 'please only enter number in amount field');
                   }
-                  if (number >= 0 && number <= 255) {
-                    widget.schedule.amount = number;
-                    controller.text = number.toString();
-                    setState(() {
-                      
-                    });
-                  } else {
-                    showAlertDialog(
-                        context, 'the amount value must be between 0-255');
-                  }
+                  
                 },
-                keyboardType: TextInputType.number,
+                // keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   label: const Text('amount'),
                   constraints: BoxConstraints(maxWidth: 100.w),
