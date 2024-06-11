@@ -111,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                         expirationDate: context
                             .watch<HomeProvider>()
                             .reminders[index]
-                            .triggerAt
+                            .triggerAt!.toIso8601String()
                             .toString(),
                       ),
                     )
