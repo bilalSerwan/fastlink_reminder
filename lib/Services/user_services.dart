@@ -73,8 +73,9 @@ class AuthServices {
     // Send the POST request to the register API endpoint.
     final response = await dio.post(
       registerApi,
-      data: {'email': recipientEmail, 'name': recipientName},
+      data: body,
       options: Options(headers: {'Accept': 'application/json'}),
+        
     );
 
     // Log the response data.

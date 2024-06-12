@@ -32,10 +32,9 @@ class AddOrEditReminderScreen extends StatefulWidget {
 class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
   _AddOrEditReminderScreenState();
   late Reminder previousReminder;
-  bool haveErrorInScheduler = false;
   bool selectExpirationDateHaveError = false;
   final formkey = GlobalKey<FormState>();
-  List<Schedule> schedules = [Schedule(amount: 1, unit: 'Hour')];
+  List<Schedule> schedules = [];
   DateTime? triggerAt;
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
@@ -49,8 +48,9 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
       triggerAt: widget.reminder.triggerAt,
       schedules: widget.reminder.schedules,
     );
-
-    schedules = previousReminder.schedules;
+    for (var schedule in previousReminder.schedules) {
+      schedules.add(Schedule(amount: schedule.amount, unit: schedule.unit));
+    }
     triggerAt = previousReminder.triggerAt;
     titleController.text = previousReminder.title ?? '';
     descriptionController.text = previousReminder.description ?? '';
@@ -206,7 +206,6 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                             schedules.add(
                               Schedule(amount: 0, unit: "day"),
                             );
-                            haveErrorInScheduler = false;
                             setState(() {});
                           },
                           child: CircleAvatar(
@@ -238,7 +237,6 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                               schedules.remove(schedules[i]);
                               setState(() {});
                             },
-                            showError: haveErrorInScheduler,
                           ),
                       ],
                     ),
@@ -256,25 +254,25 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
             onPressed: () async {
+              log('button pressed');
               if (formkey.currentState!.validate()) {
                 if (triggerAt == null) {
                   selectExpirationDateHaveError = true;
                   setState(() {});
                   return;
                 }
-                for (var element in schedules) {
-                  if (element.amount == 0) {
-                    haveErrorInScheduler = true;
-                    return;
-                  }
-                }
+                log('valid data');
                 final newReminder = Reminder(
-                    reminderId: 1,
+                    reminderId: previousReminder.reminderId,
                     title: titleController.text,
                     description: descriptionController.text,
                     triggerAt: triggerAt,
                     schedules: schedules);
-                if (newReminder != previousReminder) {
+                print('newReminder===============>$newReminder');
+                print('previousReminder===============>$previousReminder');
+                if (newReminder != previousReminder ||
+                    schedulescheck(
+                        newReminder.schedules, previousReminder.schedules)) {
                   log('add Or Edit reminder ...................');
                   final result = widget.appBarTitle == "Add"
                       ? await context
@@ -283,7 +281,8 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                       : await context
                           .read<HomeProvider>()
                           .updateReminder(newReminder);
-                  showAlertDialog(context, result.toString());
+                  showAlertDialog(context, result.toString(),
+                      editOrAddReminder: true);
                 }
               }
             },
@@ -297,5 +296,18 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
         ),
       ),
     );
+  }
+
+  bool schedulescheck(List<Schedule> schedule1, List<Schedule> schedule2) {
+    if (schedule1.length != schedule2.length) {
+      return true;
+    } else {
+      for (int i = 0; i < schedule1.length; i++) {
+        if (schedule1[i] != schedule2[i]) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

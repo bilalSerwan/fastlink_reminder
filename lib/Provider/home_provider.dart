@@ -13,6 +13,8 @@ class HomeProvider extends ChangeNotifier {
   final int paginationLimit = 10;
   int currentPagePagination = 1;
   late int lastPagepagination = 1;
+  String errorMesssge = "";
+  
   void changeIsLoading(bool newValue) {
     isLoading = newValue;
     notifyListeners();
