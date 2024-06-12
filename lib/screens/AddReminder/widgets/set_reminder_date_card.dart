@@ -21,6 +21,8 @@ class SetSchedulerCard extends StatefulWidget {
 }
 
 class _SetSchedulerCardState extends State<SetSchedulerCard> {
+  final regEx = RegExp('^[0-9]+\$');
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller =
@@ -73,26 +75,36 @@ class _SetSchedulerCardState extends State<SetSchedulerCard> {
               TextFormField(
                 controller: controller,
                 validator: (value) {
-                  return null;
+                  if(value!.trim().isEmpty) return 'required';
+                  if (regEx.hasMatch(value)) {
+                    final num = int.parse(value);
+                    if(0<num && num<=255){
+                      return null;
+                    }else{
+                      return '1-255';
+                    }
+                  }
+                   else {
+                    return 'only numbers';
+                  }
                 },
-                onChanged: (value) {                
+                onChanged: (value) {
                   print(value);
                   int number;
                   try {
                     number = int.parse(value == "" ? "0" : value.trim());
-                  if (number > 0 && number <= 255) {
-                    widget.schedule.amount = number;
-                  } else {
-                    showAlertDialog(
-                        context, 'the amount value must be between 0-255');
-                  }
+                    if (number > 0 && number <= 255) {
+                      widget.schedule.amount = number;
+                    } else {
+                      showAlertDialog(
+                          context, 'the amount value must be between 0-255');
+                    }
                   } catch (e) {
                     print(e);
                     number = 0;
                     showAlertDialog(
                         context, 'please only enter number in amount field');
                   }
-                  
                 },
                 // keyboardType: TextInputType.number,
                 decoration: InputDecoration(

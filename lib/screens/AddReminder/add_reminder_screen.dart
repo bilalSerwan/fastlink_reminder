@@ -7,6 +7,7 @@ import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/widgets/set_reminder_date_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
+import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_field.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/cupertino.dart';
@@ -42,11 +43,12 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
   void initState() {
     super.initState();
     previousReminder = Reminder(
-        title: widget.reminder.title,
-        description: widget.reminder.description,
-        triggerAt: widget.reminder.triggerAt,
-        schedules: widget.reminder.schedules,
-        );
+      reminderId: widget.reminder.reminderId,
+      title: widget.reminder.title,
+      description: widget.reminder.description,
+      triggerAt: widget.reminder.triggerAt,
+      schedules: widget.reminder.schedules,
+    );
 
     schedules = previousReminder.schedules;
     triggerAt = previousReminder.triggerAt;
@@ -253,7 +255,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
           child: ElevatedButton(
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(primaryColor)),
-            onPressed: () {
+            onPressed: () async {
               if (formkey.currentState!.validate()) {
                 if (triggerAt == null) {
                   selectExpirationDateHaveError = true;
@@ -267,17 +269,21 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                   }
                 }
                 final newReminder = Reminder(
+                    reminderId: 1,
                     title: titleController.text,
                     description: descriptionController.text,
                     triggerAt: triggerAt,
                     schedules: schedules);
                 if (newReminder != previousReminder) {
-                  log('add reminder ...................');
-                  widget.appBarTitle == "Add"
-                      ? context.read<HomeProvider>().addReminder(newReminder)
-                      : context
+                  log('add Or Edit reminder ...................');
+                  final result = widget.appBarTitle == "Add"
+                      ? await context
+                          .read<HomeProvider>()
+                          .addReminder(newReminder)
+                      : await context
                           .read<HomeProvider>()
                           .updateReminder(newReminder);
+                  showAlertDialog(context, result.toString());
                 }
               }
             },

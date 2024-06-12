@@ -1,57 +1,61 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:fastlink_reminder/Services/service.dart';
+import 'package:fastlink_reminder/Services/reminder_services.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 class HomeProvider extends ChangeNotifier {
-  final apiServices = ApiServices();
+  final reminderServices = ReminderServices();
+  String userToken = sharedPreferences.getString('user_token')!;
+  bool isLoading = false;
+  List<Reminder> remindersList = [];
+  final int paginationLimit = 10;
+  int currentPagePagination = 1;
+  late int lastPagepagination = 1;
+  void changeIsLoading(bool newValue) {
+    isLoading = newValue;
+    notifyListeners();
+  }
 
-  List<Reminder> reminders = [];
-
-  void updateReminders(Response data) {
-    Response response = data;
-    List<Reminder> newReminders = [];
-    final reminderData = jsonDecode(response.body)['reminders']['data'] as List;
-    for (int i = 0; i < reminderData.length; i++) {
-      newReminders.add(Reminder.fromJson(reminderData[i]));
+  Future<void> fetchReminders() async {
+    log('fetch data runnig');
+    if (currentPagePagination <= lastPagepagination) {
+      final response = await reminderServices.fetchData(userToken,
+          pagenationPage: currentPagePagination);
+      currentPagePagination = response['reminders']['current_page'];
+      lastPagepagination = response['reminders']['last_page'];
+      log('curr_page ==>$currentPagePagination &&&& last_page===>>$lastPagepagination');
+      currentPagePagination++;
+      final remindersData = response['reminders']['data'];
+      for (var reminder in remindersData) {
+        remindersList.add(Reminder.fromJson(reminder));
+      }
     }
-    reminders = newReminders;
+    print(remindersList);
+    changeIsLoading(false);
+    return;
   }
 
-  Future deleteReminder(Reminder reminder) async {
+  Future<String> deleteReminder(Reminder reminder) async {
     log('delete reminder ==============================>');
-    // apiServices.deleteReminder();
+    final result = await reminderServices.deleteReminder(
+        reminderId: reminder.reminderId!, userToken: userToken);
+    return result['message'];
   }
 
-  // Future editReminder() async {
-  //   log('add reminder ==============================>');
-  //   apiServices.editReminder();
-  // }
-  // Future<void> fetchData() async {
-  //   log('fetching data ==============================>');
-  //   final userToken = sharedPreferences.getString('user_token');
-  //   if (userToken == null) {
-  //     print('user token not registered !!!!!!!!!!!!!!');
-  //     return;
-  //   } else {
-  //     await apiServices.fetchData(userToken);
-  //   }
-  // }
-
-  Future<void> addReminder(Reminder reminder) async {
-    final token = sharedPreferences.getString('user_token');
-    log(token!);
-    final result =
-        await apiServices.addReminder(reminder: reminder, token: token);
-
+  Future<String> addReminder(Reminder reminder) async {
+    log('add reminder method running');
+    log(userToken);
+    final result = await reminderServices.addReminder(
+        newReminder: reminder, userToken: userToken);
     print(result);
+
+    return result['message'];
   }
 
-  Future<void> updateReminder(Reminder reminder) async {
-    // apiServices.editReminder();
+  Future<String> updateReminder(Reminder reminder) async {
+    final result = await reminderServices.updateReminder(userToken, reminder);
+    return result['message'];
   }
 }

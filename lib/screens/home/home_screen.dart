@@ -1,20 +1,37 @@
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
-import 'package:fastlink_reminder/Services/service.dart';
-import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:fastlink_reminder/screens/home/widgets/reminder_card.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
+import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final scrollController = ScrollController();
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    context.read<HomeProvider>().changeIsLoading(true);
+    await context.read<HomeProvider>().fetchReminders();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +40,13 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         onPressed: () {
-          //create new Reminder .......................
-
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => AddOrEditReminderScreen(
                 appBarTitle: 'Add',
                 reminder: Reminder(
+                    reminderId: 0,
                     title: '',
                     description: '',
                     triggerAt: DateTime.tryParse(''),
@@ -70,53 +86,51 @@ class HomeScreen extends StatelessWidget {
         width: 1.sw,
         height: 1.sh,
         padding: EdgeInsets.all(10.r),
-        child: FutureBuilder(
-            future: ApiServices()
-                .fetchData(sharedPreferences.getString('user_token')!),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return Center(
-                      child: Text('Error in fetching data ${snapshot.error}'));
-                } else {
-                  context.read<HomeProvider>().updateReminders(snapshot.data);
-                }
-              }
-              return snapshot.hasData
-                  ? ListView.builder(
-                      itemCount: context.watch<HomeProvider>().reminders.length,
-                      itemBuilder: (context, index) => ReminderCard(
-                        deleteButtonPressed: () {
-                          context.read<HomeProvider>().deleteReminder(
-                              context.watch<HomeProvider>().reminders[index]);
-                        },
-                        editButtonPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddOrEditReminderScreen(
-                                appBarTitle: 'Edit',
-                                reminder: context
+        child: context.watch<HomeProvider>().isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.builder(
+                controller: scrollController,
+                itemCount: context.watch<HomeProvider>().remindersList.length,
+                itemBuilder: (context, index) =>
+                    context.watch<HomeProvider>().paginationLimit >= index
+                        ? ReminderCard(
+                            deleteButtonPressed: () async {
+                              final result = await context
+                                  .read<HomeProvider>()
+                                  .deleteReminder(context
+                                      .read<HomeProvider>()
+                                      .remindersList[index]);
+                              showAlertDialog(context, result);
+                            },
+                            editButtonPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AddOrEditReminderScreen(
+                                    appBarTitle: 'Edit',
+                                    reminder: context
+                                        .watch<HomeProvider>()
+                                        .remindersList[index],
+                                  ),
+                                ),
+                              );
+                            },
+                            reminderTitle: context
                                     .watch<HomeProvider>()
-                                    .reminders[index],
-                              ),
+                                    .remindersList[index]
+                                    .title ??
+                                'have error please restart the app',
+                            expirationDate: DateFormat.yMMMd().format(
+                              context
+                                  .watch<HomeProvider>()
+                                  .remindersList[index]
+                                  .triggerAt!,
                             ),
-                          );
-                        },
-                        reminderTitle: context
-                                .watch<HomeProvider>()
-                                .reminders[index]
-                                .title ??
-                            'have error please restart the app',
-                        expirationDate: context
-                            .watch<HomeProvider>()
-                            .reminders[index]
-                            .triggerAt!.toIso8601String()
-                            .toString(),
-                      ),
-                    )
-                  : const Center(child: CircularProgressIndicator());
-            }),
+                          )
+                        : const Center(child: CircularProgressIndicator()),
+              ),
       ),
     );
   }

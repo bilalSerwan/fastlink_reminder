@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Services/firebase_api.dart';
-import 'package:fastlink_reminder/Services/service.dart';
+import 'package:fastlink_reminder/Services/user_services.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/user.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,18 @@ class AuthProvider extends ChangeNotifier {
   bool showPassword = false;
   bool keepMeSignInButton = false;
   User user = User();
-  final apiServices = ApiServices();
+  final authService = AuthServices();
+
+  void changeShowPassword() {
+    showPassword = !showPassword;
+    notifyListeners();
+  }
+
+  void changekeepMeSignInButton() {
+    keepMeSignInButton = !keepMeSignInButton;
+    notifyListeners();
+  }
+
 
   String? validationFunction(String? value, int miniLentgh, int maxLentgh) {
     if (value == null) return 'This field is required';
@@ -26,15 +37,6 @@ class AuthProvider extends ChangeNotifier {
     return null;
   }
 
-  void changeShowPassword() {
-    showPassword = !showPassword;
-    notifyListeners();
-  }
-
-  void changekeepMeSignInButton() {
-    keepMeSignInButton = !keepMeSignInButton;
-    notifyListeners();
-  }
 
   Future<String> signInMethod(
       {required String email, required String password}) async {
@@ -45,7 +47,7 @@ class AuthProvider extends ChangeNotifier {
       return 'have error in fcmToken not received ';
     }
     log('fcmToken================>$fcmToken');
-    final result = await apiServices.loginUser(
+    final result = await authService.loginUser(
         email: email, password: password, fcmToken: fcmToken);
     sharedPreferences.setString("fcmToken", fcmToken);
     if (result['message'] == null) {
@@ -65,7 +67,8 @@ class AuthProvider extends ChangeNotifier {
 
   Future<String> signUpMethod(
       {required String email, required String fullName}) async {
-    final result = await apiServices.sendEmail(email: email, name: fullName);
+        log('sign up method ......................');
+    final result = await authService.sendEmail(recipientEmail: email, recipientName: fullName);
     return result['message'];
   }
 
@@ -92,7 +95,7 @@ class AuthProvider extends ChangeNotifier {
     log('check token expired =================> $token');
 
     try {
-      final result = await apiServices.checkTokenExpiered(token: token);
+      final result = await authService.checkTokenExpiered(token: token);
       print(result);
       // If the response contains a "user" key, the token is valid and we can parse the user data
       if (result['user'] != null) {
@@ -108,10 +111,12 @@ class AuthProvider extends ChangeNotifier {
 
   Future logOutUser()async{
     String userToken = sharedPreferences.getString('user_token')!;
-    final result = await apiServices.userLogOut(userToken);
+    final result = await authService.logOut(userToken);
     print(result);
     print(await sharedPreferences.clear());
     log('log out muthod runned ............................');
   }
+
+
 }//class
 

@@ -77,6 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       size: 20.r,
                       color: subcolor.withOpacity(0.4),
                     ),
+                    keyboardType: TextInputType.emailAddress,
                     suffixIcon: Text(
                       '@nawroz.telecom.com',
                       style: subtitle2.copyWith(fontSize: 12.sp),
@@ -101,13 +102,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       size: 20.r,
                       color: subcolor.withOpacity(0.4),
                     ),
-                    suffixIcon: IconButton(
-                      iconSize: 20.r,
-                      highlightColor: Colors.transparent,
-                      onPressed: () {
+                    suffixIcon: InkWell(
+                      onTap: () {
                         context.read<AuthProvider>().changeShowPassword();
                       },
-                      icon: Icon(context.watch<AuthProvider>().showPassword
+                      child: Icon(context.watch<AuthProvider>().showPassword
                           ? Icons.visibility_off
                           : Icons.visibility),
                     ),
