@@ -20,6 +20,7 @@ class HomeProvider extends ChangeNotifier {
   // }
 
   Future<void> fetchReminders(bool anotherPage) async {
+    if (currentPagePagination > lastPagepagination) return;
     log('fetch data runnig');
     if (anotherPage) {
       currentPagePagination++;
@@ -45,7 +46,7 @@ class HomeProvider extends ChangeNotifier {
   Future<String> deleteReminder(Reminder reminder) async {
     log('delete reminder ==============================>');
     final result = await reminderServices.deleteReminder(
-        reminderId: reminder.reminderId!, userToken: userToken);
+        reminderId: reminder.reminderId, userToken: userToken);
     return result['message'];
   }
 

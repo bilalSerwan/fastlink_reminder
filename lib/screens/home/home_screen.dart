@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _scrollListener() {
     if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent) {
+        scrollController.position.maxScrollExtent ) {
       log('load more data');
       fetchData(true);
     }
