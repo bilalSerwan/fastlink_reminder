@@ -13,7 +13,8 @@ class ReminderServices {
     };
 
     try {
-      final response = await dio.get('$fetchAllReminders?page=$pagenationPage',
+      final response = await dio.get(
+          '$fetchAllRemindersApi?page=$pagenationPage',
           options: Options(headers: headers));
       return response.data;
     } catch (e) {

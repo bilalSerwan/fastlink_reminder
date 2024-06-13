@@ -1,4 +1,4 @@
-import 'package:fastlink_reminder/screens/home/home_screen.dart';
+import 'package:fastlink_reminder/drawer_screen.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -32,7 +32,7 @@ void showAlertDialog(BuildContext context, String result,
                         ? Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HomeScreen()),
+                                builder: (context) => const DrawerScreen()),
                             (route) => false)
                         : Navigator.pop(context);
                   },

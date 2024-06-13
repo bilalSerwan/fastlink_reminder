@@ -23,9 +23,9 @@ void main() async {
   );
 }
 
+    final navigatorKey = GlobalKey<NavigatorState>();
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -39,9 +39,10 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (context) => AuthProvider()),
             ChangeNotifierProvider(create: (context) => HomeProvider()),
           ],
-          child: const MaterialApp(
+          child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: DrawerScreen(),
+            home: const SplashScreen(),
+            navigatorKey: navigatorKey,
           ),
         );
       },

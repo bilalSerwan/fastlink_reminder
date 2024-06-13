@@ -3,9 +3,9 @@
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
+import 'package:fastlink_reminder/drawer_screen.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
-import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -93,7 +93,7 @@ checkToken(BuildContext context) async {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const DrawerScreen(),
         ),
       );
     }

@@ -14,27 +14,30 @@ class HomeProvider extends ChangeNotifier {
   int currentPagePagination = 1;
   late int lastPagepagination = 1;
   String errorMesssge = "";
-  
+
   void changeIsLoading(bool newValue) {
     isLoading = newValue;
     notifyListeners();
   }
 
-  Future<void> fetchReminders() async {
+  Future<void> fetchReminders(bool anotherPage) async {
     log('fetch data runnig');
+    if (anotherPage) {
+      currentPagePagination++;
+    } else {
+      remindersList.clear();
+    }
     if (currentPagePagination <= lastPagepagination) {
       final response = await reminderServices.fetchData(userToken,
           pagenationPage: currentPagePagination);
       currentPagePagination = response['reminders']['current_page'];
       lastPagepagination = response['reminders']['last_page'];
       log('curr_page ==>$currentPagePagination &&&& last_page===>>$lastPagepagination');
-      currentPagePagination++;
       final remindersData = response['reminders']['data'];
       for (var reminder in remindersData) {
         remindersList.add(Reminder.fromJson(reminder));
       }
     }
-    print(remindersList);
     changeIsLoading(false);
     return;
   }

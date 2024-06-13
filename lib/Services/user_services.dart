@@ -69,14 +69,19 @@ class AuthServices {
       'name': recipientName,
       'email': recipientEmail,
     };
-
-    // Send the POST request to the register API endpoint.
     final response = await dio.post(
-      registerApi,
-      data: body,
-      options: Options(headers: {'Accept': 'application/json'}),
-        
-    );
+        'https://d-reminder-api.net-performance.online/api/register',
+        data: body,
+        options: Options(
+          headers: {'Accept': 'application/json'},
+        ));
+    // Send the POST request to the register API endpoint.
+    //  await dio.post(
+    //   registerApi,
+    //   data: body,
+    //   options: Options(headers: {'Accept': 'application/json'},),
+
+    // );
 
     // Log the response data.
     log('response for send email method =====>>>>>${response.data}');
@@ -107,7 +112,14 @@ class AuthServices {
     return response.data;
   }
 
-  // Future destroyAccount(){
-
-  // }
+  Future destroyAccount(String userToken) async {
+    return await dio.post(
+      destroyAccountApi,
+      options: Options(headers: {
+        'Authorization': 'Bearer $userToken',
+        'Accept': 'application/json'
+      },
+    ),
+    );
+  }
 }
