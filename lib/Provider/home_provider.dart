@@ -8,17 +8,16 @@ import 'package:flutter/material.dart';
 class HomeProvider extends ChangeNotifier {
   final reminderServices = ReminderServices();
   String userToken = sharedPreferences.getString('user_token')!;
-  bool isLoading = false;
   List<Reminder> remindersList = [];
   final int paginationLimit = 10;
   int currentPagePagination = 1;
   late int lastPagepagination = 1;
   String errorMesssge = "";
 
-  void changeIsLoading(bool newValue) {
-    isLoading = newValue;
-    notifyListeners();
-  }
+  // void changeIsLoading(bool newValue) {
+  //   isLoading = newValue;
+  //   notifyListeners();
+  // }
 
   Future<void> fetchReminders(bool anotherPage) async {
     log('fetch data runnig');
@@ -38,7 +37,8 @@ class HomeProvider extends ChangeNotifier {
         remindersList.add(Reminder.fromJson(reminder));
       }
     }
-    changeIsLoading(false);
+    // changeIsLoading(false);
+    notifyListeners();
     return;
   }
 

@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:equatable/equatable.dart';
+import 'package:jiffy/jiffy.dart';
 
 class Schedule extends Equatable {
   Schedule({
@@ -8,8 +9,8 @@ class Schedule extends Equatable {
     required this.unit,
   });
 
-  int? amount;
-  String? unit;
+  int amount;
+  String unit;
 
   Schedule copyWith({
     int? amount,
@@ -32,6 +33,20 @@ class Schedule extends Equatable {
         "amount": amount,
         "unit": unit,
       };
+
+  String calculateDate(DateTime triggerAt) {
+    if (unit == "day") {
+      return Jiffy.parse(triggerAt.toString()).subtract(days: amount).yMMMMdjm;
+    } else if (unit == "week") {
+      return Jiffy.parse(triggerAt.toString()).subtract(weeks: amount).yMMMMdjm;
+    } else if (unit == "month") {
+      return Jiffy.parse(triggerAt.toString())
+          .subtract(months: amount)
+          .yMMMMdjm;
+    } else {
+      return Jiffy.parse(triggerAt.toString()).subtract(hours: amount).yMMMMdjm;
+    }
+  }
 
   @override
   List<Object?> get props => [

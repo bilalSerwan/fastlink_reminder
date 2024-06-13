@@ -11,9 +11,9 @@ class Reminder extends Equatable {
         required this.reminderId,
     });
 
-     String? title;
-     String? description;
-     int? reminderId;
+     String title;
+     String description;
+     int reminderId;
      DateTime? triggerAt;
      List<Schedule> schedules;
 
@@ -38,7 +38,7 @@ class Reminder extends Equatable {
           reminderId: json['id'],
             title: json["title"],
             description: json["description"],
-            triggerAt: DateTime.tryParse(json["trigger_at"] ?? ""),
+            triggerAt: DateTime.tryParse(json["trigger_at"]) ?? DateTime.now(),
             schedules: json["schedules"] == null ? [] : List<Schedule>.from(json["schedules"]!.map((x) => Schedule.fromJson(x))),
         );
     }

@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/model/schedules.dart';
 import 'package:fastlink_reminder/screens/AddReminder/add_reminder_screen.dart';
 import 'package:fastlink_reminder/screens/home/widgets/reminder_card.dart';
+import 'package:fastlink_reminder/screens/reminder_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
@@ -26,15 +29,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchData(false);
+    scrollController.addListener(_scrollListener);
   }
 
-  Future<void> fetchData() async {
-    isLoading = true;
-    setState(() {});
-    await context.read<HomeProvider>().fetchReminders(false);
-    isLoading = false;
-    setState(() {});
+  void _scrollListener() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+      log('load more data');
+      fetchData(true);
+    }
+  }
+
+  void fetchData(bool value) async {
+    setState(() {
+      isLoading = true;
+    });
+    await context.read<HomeProvider>().fetchReminders(value);
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
@@ -54,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     title: '',
                     description: '',
                     triggerAt: DateTime.tryParse(''),
-                    schedules: [Schedule(amount: 0, unit: "Hour")]),
+                    schedules: [Schedule(amount: 0, unit: "hour")]),
               ),
             ),
           );
@@ -97,47 +111,59 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: scrollController,
                 itemCount: context.watch<HomeProvider>().remindersList.length,
                 itemBuilder: (context, index) =>
-                    context.watch<HomeProvider>().paginationLimit >= index
-                        ? ReminderCard(
-                            deleteButtonPressed: () async {
-                              isLoading = true;
-                              setState(() {});
-                              showAlertDialog(
-                                  navigatorKey.currentContext!,
-                                  await context
-                                      .read<HomeProvider>()
-                                      .deleteReminder(context
-                                          .read<HomeProvider>()
-                                          .remindersList[index]),
-                                  editOrAddReminder: true);
-                            },
-                            editButtonPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddOrEditReminderScreen(
-                                    appBarTitle: 'Edit',
-                                    reminder: context
-                                        .watch<HomeProvider>()
-                                        .remindersList[index],
-                                  ),
-                                ),
-                              );
-                            },
-                            reminderTitle: context
-                                    .watch<HomeProvider>()
-                                    .remindersList[index]
-                                    .title ??
-                                'have error please restart the app',
-                            expirationDate: DateFormat.yMMMd().format(
-                              context
+                    // context.watch<HomeProvider>().paginationLimit >= index?
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReminderScreen(
+                              reminder: context
                                   .watch<HomeProvider>()
-                                  .remindersList[index]
-                                  .triggerAt!,
+                                  .remindersList[index],
                             ),
-                          )
-                        : const Center(child: CircularProgressIndicator()),
-              ),
+                          ),
+                        );
+                      },
+                      child: ReminderCard(
+                        deleteButtonPressed: () async {
+                          isLoading = true;
+                          setState(() {});
+                          showAlertDialog(
+                              navigatorKey.currentContext!,
+                              await context.read<HomeProvider>().deleteReminder(
+                                  context
+                                      .watch<HomeProvider>()
+                                      .remindersList[index]),
+                              editOrAddReminder: true);
+                        },
+                        editButtonPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddOrEditReminderScreen(
+                                appBarTitle: 'Edit',
+                                reminder: context
+                                    .watch<HomeProvider>()
+                                    .remindersList[index],
+                              ),
+                            ),
+                          );
+                        },
+                        reminderTitle: context
+                                .watch<HomeProvider>()
+                                .remindersList[index]
+                                .title,
+                        expirationDate: DateFormat.yMMMd().format(
+                          context
+                              .watch<HomeProvider>()
+                              .remindersList[index]
+                              .triggerAt!,
+                        ),
+                      ),
+                    )
+                // : const Center(child: CircularProgressIndicator()),
+                ),
       ),
     );
   }

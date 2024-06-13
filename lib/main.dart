@@ -3,7 +3,7 @@ import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/Services/firebase_api.dart';
 import 'package:fastlink_reminder/firebase_options.dart';
 import 'package:fastlink_reminder/screens/first_screen.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:fastlink_reminder/screens/reminder_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,8 +16,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-  await FireBaseAPI().initializeNotification();
+  FirebaseMessagingService().initialize();
+
   sharedPreferences = await SharedPreferences.getInstance();
   runApp(
     const MyApp(),

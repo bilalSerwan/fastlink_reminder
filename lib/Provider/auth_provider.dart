@@ -11,7 +11,6 @@ class AuthProvider extends ChangeNotifier {
   bool keepMeSignInButton = false;
   User user = User();
   final authService = AuthServices();
-  
 
   void changeShowPassword() {
     showPassword = !showPassword;
@@ -41,7 +40,7 @@ class AuthProvider extends ChangeNotifier {
       {required String email, required String password}) async {
     log("email => $email ,,, password => $password");
 
-    String? fcmToken = await FireBaseAPI().getFCMToken();
+    String? fcmToken = await FirebaseMessagingService().getToken();
     if (fcmToken == null) {
       return 'have error in fcmToken not received ';
     }
