@@ -1,4 +1,4 @@
-import 'package:fastlink_reminder/drawer_screen.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

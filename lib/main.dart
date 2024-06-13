@@ -1,7 +1,7 @@
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/Services/firebase_api.dart';
-import 'package:fastlink_reminder/drawer_screen.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/firebase_options.dart';
 import 'package:fastlink_reminder/screens/first_screen.dart';
 import 'package:firebase_core/firebase_core.dart';

@@ -112,14 +112,27 @@ class AuthServices {
     return response.data;
   }
 
-  Future destroyAccount(String userToken) async {
+  Future<Response> destroyAccount(String userToken) async {
     return await dio.post(
       destroyAccountApi,
-      options: Options(headers: {
-        'Authorization': 'Bearer $userToken',
-        'Accept': 'application/json'
-      },
-    ),
+      options: Options(
+        headers: {
+          'Authorization': 'Bearer $userToken',
+          'Accept': 'application/json'
+        },
+      ),
+    );
+  }
+
+  confirmDestroyAccount(String userToken, String confirmCode) async {
+    final headers = {
+      'Authorization': 'Bearer $userToken',
+      'Accept': 'application/json'
+    };
+    return await dio.post(
+      destroyAccountConfirmationApi,
+      options: Options(headers: headers),
+      data: {'code': confirmCode},
     );
   }
 }

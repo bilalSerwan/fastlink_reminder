@@ -3,7 +3,7 @@
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
-import 'package:fastlink_reminder/drawer_screen.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
 import 'package:flutter/material.dart';

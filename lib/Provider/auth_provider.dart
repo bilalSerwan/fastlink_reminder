@@ -13,7 +13,6 @@ class AuthProvider extends ChangeNotifier {
   final authService = AuthServices();
   String userToken = sharedPreferences.getString('user_token')!;
 
-
   void changeShowPassword() {
     showPassword = !showPassword;
     notifyListeners();
@@ -23,7 +22,6 @@ class AuthProvider extends ChangeNotifier {
     keepMeSignInButton = !keepMeSignInButton;
     notifyListeners();
   }
-
 
   String? validationFunction(String? value, int miniLentgh, int maxLentgh) {
     if (value == null) return 'This field is required';
@@ -38,7 +36,6 @@ class AuthProvider extends ChangeNotifier {
     }
     return null;
   }
-
 
   Future<String> signInMethod(
       {required String email, required String password}) async {
@@ -69,8 +66,9 @@ class AuthProvider extends ChangeNotifier {
 
   Future<String> signUpMethod(
       {required String email, required String fullName}) async {
-        log('sign up method ......................');
-    final result = await authService.sendEmail(recipientEmail: email, recipientName: fullName);
+    log('sign up method ......................');
+    final result = await authService.sendEmail(
+        recipientEmail: email, recipientName: fullName);
     return result['message'];
   }
 
@@ -111,17 +109,22 @@ class AuthProvider extends ChangeNotifier {
     return false;
   } //checkTokenExpiered-method
 
-  Future logOutUser()async{
+  Future logOutUser() async {
     final result = await authService.logOut(userToken);
     print(result);
     print(await sharedPreferences.clear());
     log('log out muthod runned ............................');
   }
 
-  Future<String> destroyAccount()async{
-    final result =await  authService.destroyAccount(userToken);
-    return result;
-  } 
-
+  Future<String> destroyAccount() async {
+    final result = await authService.destroyAccount(userToken);
+    print(result);
+    return result.data['message'];
+  }
+    Future<String> confirmDestroyAccount(String confirmCode) async {
+    final result = await authService.confirmDestroyAccount(userToken,confirmCode);
+    print(result);
+    return result.data['message'];
+  }
 }//class
 

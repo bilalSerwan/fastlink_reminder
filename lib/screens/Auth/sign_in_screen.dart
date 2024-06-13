@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
-import 'package:fastlink_reminder/drawer_screen.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
 import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
