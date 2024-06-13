@@ -11,7 +11,7 @@ class AuthProvider extends ChangeNotifier {
   bool keepMeSignInButton = false;
   User user = User();
   final authService = AuthServices();
-  String userToken = sharedPreferences.getString('user_token')!;
+  
 
   void changeShowPassword() {
     showPassword = !showPassword;
@@ -110,6 +110,7 @@ class AuthProvider extends ChangeNotifier {
   } //checkTokenExpiered-method
 
   Future logOutUser() async {
+    String userToken = sharedPreferences.getString('user_token')!;
     final result = await authService.logOut(userToken);
     print(result);
     print(await sharedPreferences.clear());
@@ -117,12 +118,18 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<String> destroyAccount() async {
+    String userToken = sharedPreferences.getString('user_token')!;
+
     final result = await authService.destroyAccount(userToken);
     print(result);
     return result.data['message'];
   }
-    Future<String> confirmDestroyAccount(String confirmCode) async {
-    final result = await authService.confirmDestroyAccount(userToken,confirmCode);
+
+  Future<String> confirmDestroyAccount(String confirmCode) async {
+    String userToken = sharedPreferences.getString('user_token')!;
+
+    final result =
+        await authService.confirmDestroyAccount(userToken, confirmCode);
     print(result);
     return result.data['message'];
   }

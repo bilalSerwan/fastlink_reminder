@@ -3,9 +3,9 @@
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
-import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_in_screen.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -71,9 +71,10 @@ class _SplashScreenState extends State<SplashScreen> {
 
 checkToken(BuildContext context) async {
   final userToken = sharedPreferences.getString('user_token');
-  log('User_Token =======> $userToken');
   if (userToken == null) {
-    await Future.delayed(const Duration(seconds: 2));
+    log('User_Token =======> null ');
+
+    await Future.delayed(const Duration(seconds: 1));
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -81,6 +82,7 @@ checkToken(BuildContext context) async {
       ),
     );
   } else {
+    log('User_Token =======> $userToken ');
     final result = await AuthProvider().checkTokenExpiered(userToken);
     if (result) {
       Navigator.pushReplacement(

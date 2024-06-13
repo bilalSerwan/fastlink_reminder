@@ -5,6 +5,32 @@ import 'package:fastlink_reminder/links.dart';
 
 class AuthServices {
   final dio = Dio();
+  dynamic errorMessage = "";
+  AuthServices() {
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          // Do something before request is sent
+          return handler.next(options); // continue
+        },
+        onResponse: (response, handler) {
+          // Do something with response data
+          return handler.next(response); // continue
+        },
+        onError: (DioError e, handler) {
+          // Check for the 422 status code
+          if (e.response?.statusCode == 422) {
+            // Handle the 422 error specifically
+            print('Error 422: ${e.response?.data}');
+            errorMessage = e.response?.data['message'];
+            // Optionally, you can do more specific handling here
+          }
+          // Handle other errors
+          return handler.next(e); // continue
+        },
+      ),
+    );
+  }
 
   /// Logs in a user using the provided email, password, and FCM token.
   ///
@@ -60,30 +86,24 @@ class AuthServices {
   Future<Map<String, dynamic>> sendEmail(
       {required String recipientEmail, required String recipientName}) async {
     log('send email ...............................');
-    // Set the headers for the request.
 
     log(registerApi);
-
-    // Set the request body.
     final Map<String, String> body = {
       'name': recipientName,
       'email': recipientEmail,
     };
-    final response = await dio.post(
-        'https://d-reminder-api.net-performance.online/api/register',
-        data: body,
-        options: Options(
-          headers: {'Accept': 'application/json'},
-        ));
-    // Send the POST request to the register API endpoint.
-    //  await dio.post(
-    //   registerApi,
-    //   data: body,
-    //   options: Options(headers: {'Accept': 'application/json'},),
-
-    // );
-
-    // Log the response data.
+    final Response response;
+    try {
+      response = await dio.post(
+          'https://d-reminder-api.net-performance.online/api/register',
+          data: body,
+          options: Options(
+            headers: {'Accept': 'application/json'},
+          ));
+    } catch (e) {
+      print('catch error');
+      return {'message': errorMessage};
+    }
     log('response for send email method =====>>>>>${response.data}');
 
     // Return the decoded JSON response from the server.

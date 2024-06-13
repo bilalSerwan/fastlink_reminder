@@ -1,9 +1,9 @@
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/Services/firebase_api.dart';
-import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/firebase_options.dart';
 import 'package:fastlink_reminder/screens/first_screen.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,6 +16,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
   await FireBaseAPI().initializeNotification();
   sharedPreferences = await SharedPreferences.getInstance();
   runApp(
@@ -23,7 +24,8 @@ void main() async {
   );
 }
 
-    final navigatorKey = GlobalKey<NavigatorState>();
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
