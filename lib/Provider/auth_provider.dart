@@ -130,6 +130,7 @@ class AuthProvider extends ChangeNotifier {
     final result =
         await authService.confirmDestroyAccount(userToken, confirmCode);
     print(result);
+    sharedPreferences.clear();
     return result.data['message'];
   }
 }//class
