@@ -1,5 +1,4 @@
 import 'package:fastlink_reminder/screens/home/widgets/slidable_button.dart';
-import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -42,11 +41,16 @@ class ReminderCard extends StatelessWidget {
       child: Container(
         width: 0.92.sw,
         decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.4),
+              blurRadius: 5,
+              spreadRadius: 5,
+            )
+          ],
           borderRadius: BorderRadius.all(
             Radius.circular(15.r),
-          ),
-          border: Border.all(
-            color: primaryColor,
           ),
         ),
         margin: EdgeInsets.all(5.r),

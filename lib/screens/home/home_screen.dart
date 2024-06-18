@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _scrollListener() {
     if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent ) {
+        scrollController.position.maxScrollExtent) {
       log('load more data');
       fetchData(true);
     }
@@ -100,8 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.indigo,
       ),
       body: Container(
-        width: 1.sw,
-        height: 1.sh,
+        width: 0.95.sw,
+        height: 0.95.sh,
         padding: EdgeInsets.all(10.r),
         child: isLoading
             ? const Center(
@@ -151,9 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         reminderTitle: context
-                                .watch<HomeProvider>()
-                                .remindersList[index]
-                                .title,
+                            .watch<HomeProvider>()
+                            .remindersList[index]
+                            .title,
                         expirationDate: DateFormat.yMMMd().format(
                           context
                               .watch<HomeProvider>()
