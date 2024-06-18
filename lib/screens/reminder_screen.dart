@@ -67,7 +67,7 @@ class ReminderScreen extends StatelessWidget {
               ),
               Text(
                 'Expire date : ${DateFormat.yMMMd().format(reminder.triggerAt!)}',
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: Colors.red, fontSize: 17.sp),
               ),
               SizedBox(
                 height: 15.h,
@@ -82,11 +82,89 @@ class ReminderScreen extends StatelessWidget {
               SizedBox(
                 height: 15.h,
               ),
-              for (var schedule in reminder.schedules)
-                Text(
-                  'Schedule  : ${schedule.calculateDate(reminder.triggerAt!)} ',
-                  style: TextStyle(fontSize: 15.sp),
+              Padding(
+                padding: EdgeInsets.all(10.r),
+                child: Table(
+                  border: TableBorder.all(color: Colors.indigo),
+                  children: [
+                    TableRow(
+                      decoration: BoxDecoration(
+                        color: Colors.indigo,
+                        border: Border.all(color: Colors.black),
+                      ),
+                      children: [
+                        TableCell(
+                          verticalAlignment: TableCellVerticalAlignment.middle,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0.r),
+                            child: Text(
+                              'By Text',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 17.sp),
+                            ),
+                          ),
+                        ),
+                        TableCell(
+                          verticalAlignment: TableCellVerticalAlignment.middle,
+                          child: Padding(
+                            padding: EdgeInsets.all(8.0.r),
+                            child: Text(
+                              'By Date',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: Colors.white, fontSize: 17.sp),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    ...List.generate(
+                      reminder.schedules.length,
+                      (index) => TableRow(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.indigo),
+                        ),
+                        children: [
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0.r),
+                              child: Text(
+                                'before ${reminder.schedules[index].amount.toString()} ${reminder.schedules[index].unit}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 15.sp),
+                              ),
+                            ),
+                          ),
+                          TableCell(
+                            verticalAlignment:
+                                TableCellVerticalAlignment.middle,
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0.r),
+                              child: Text(
+                                reminder.schedules[index]
+                                    .calculateDate(reminder.triggerAt!),
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 15.sp),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
                 ),
+              ),
+
+              // for (var schedule in reminder.schedules)
+              //   Text(
+              //     'Schedule  : ${schedule.calculateDate(reminder.triggerAt!)} ',
+              //     style: TextStyle(fontSize: 15.sp),
+              //   ),
             ],
           ),
         ),
