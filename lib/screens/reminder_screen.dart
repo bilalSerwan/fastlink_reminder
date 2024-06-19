@@ -1,5 +1,6 @@
 import 'package:fastlink_reminder/model/reminder.dart';
 import 'package:fastlink_reminder/screens/drawer_screen.dart';
+import 'package:fastlink_reminder/utils/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -43,6 +44,22 @@ class ReminderScreen extends StatelessWidget {
                         radius: 20.r,
                         backgroundColor: Colors.white,
                         child: const Icon(Icons.arrow_back),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 75.r,
+                    left: 90.r,
+                    child: Container(
+                      padding: EdgeInsets.all(5.r),
+                      width: 200.w,
+                      height: 100.h,
+                      child: Text(
+                        reminder.title,
+                        textAlign: TextAlign.center,
+                        style: subtitle,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
                       ),
                     ),
                   ),
