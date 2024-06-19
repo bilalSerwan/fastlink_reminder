@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:fastlink_reminder/Provider/home_provider.dart';
 import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/model/reminder.dart';

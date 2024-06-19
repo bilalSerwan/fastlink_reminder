@@ -237,6 +237,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                               schedules.remove(schedules[i]);
                               setState(() {});
                             },
+                            iseditting: widget.appBarTitle == "Edit",
                           ),
                       ],
                     ),
@@ -252,7 +253,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
           padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
           child: ElevatedButton(
             style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(primaryColor)),
+                backgroundColor: WidgetStateProperty.all(primaryColor)),
             onPressed: () async {
               log('button pressed');
               if (formkey.currentState!.validate()) {
@@ -260,6 +261,13 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                   selectExpirationDateHaveError = true;
                   setState(() {});
                   return;
+                }
+                for (var schedule in schedules) {
+                  if (schedule.haveError) {
+                    return;
+                  } else {
+                    schedule.amount = int.parse(schedule.controller.text);
+                  }
                 }
                 log('valid data');
                 final newReminder = Reminder(
