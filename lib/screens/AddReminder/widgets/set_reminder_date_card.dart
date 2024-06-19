@@ -5,13 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SetSchedulerCard extends StatefulWidget {
-  const SetSchedulerCard({
+  SetSchedulerCard({
     super.key,
     required this.schedule,
     required this.onDeleteTap,
-  });
+    required this.iseditting,
+  }) {
+    if (iseditting) {
+      schedule.controller.text = schedule.amount.toString();
+    }
+  }
   final Schedule schedule;
   final void Function() onDeleteTap;
+  final bool iseditting;
 
   @override
   State<SetSchedulerCard> createState() => _SetSchedulerCardState();
@@ -19,15 +25,10 @@ class SetSchedulerCard extends StatefulWidget {
 
 class _SetSchedulerCardState extends State<SetSchedulerCard> {
   final regEx = RegExp('^[0-9]+\$');
-  bool errorInAmountField = false;
   String errorMessage = "";
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController(
-        text: widget.schedule.amount == 0
-            ? null
-            : widget.schedule.amount.toString());
     List units = ["hour", "day", "week", "month"];
     return Container(
       padding: EdgeInsets.all(7.w),
@@ -66,26 +67,26 @@ class _SetSchedulerCardState extends State<SetSchedulerCard> {
           Row(
             children: [
               TextFormField(
-                controller: controller,
+                controller: widget.schedule.controller,
                 validator: (value) {
                   if (value!.trim().isEmpty) {
-                    errorInAmountField = true;
+                    widget.schedule.haveError = true;
                     errorMessage = "amount field is required";
                   } else {
                     if (regEx.hasMatch(value)) {
                       final num = int.parse(value);
                       if (0 < num && num <= 255) {
-                        errorInAmountField = false;
+                        widget.schedule.haveError = false;
                         errorMessage = "";
                         setState(() {});
                         return null;
                       } else {
-                        errorInAmountField = true;
+                        widget.schedule.haveError = true;
                         errorMessage =
                             "The amount field must be a number between 0-255";
                       }
                     } else {
-                      errorInAmountField = true;
+                      widget.schedule.haveError = true;
                       errorMessage =
                           "Please only enter numbers in amount field";
                     }
@@ -93,19 +94,13 @@ class _SetSchedulerCardState extends State<SetSchedulerCard> {
                   setState(() {});
                   return null;
                 },
-                onChanged: (value) {
-                  print(value);
-                  if (!errorInAmountField) {
-                    int num = int.parse(value);
-                    if (0 < num && num <= 255) {
-                      widget.schedule.amount = num;
-                      print(widget.schedule.amount);
-                    }
-                  }
-                },
-                // keyboardType: TextInputType.number,
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   label: const Text('amount'),
+                  alignLabelWithHint: true,
+                  hintText: widget.schedule.amount == 0
+                      ? null
+                      : '${widget.schedule.amount}',
                   constraints: BoxConstraints(maxWidth: 100.w),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(
@@ -129,7 +124,7 @@ class _SetSchedulerCardState extends State<SetSchedulerCard> {
           SizedBox(
             height: 10.h,
           ),
-          errorInAmountField
+          widget.schedule.haveError
               ? Row(
                   children: [
                     Icon(
