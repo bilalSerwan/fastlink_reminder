@@ -52,8 +52,8 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
       schedules.add(Schedule(amount: schedule.amount, unit: schedule.unit));
     }
     triggerAt = previousReminder.triggerAt;
-    titleController.text = previousReminder.title ?? '';
-    descriptionController.text = previousReminder.description ?? '';
+    titleController.text = previousReminder.title ;
+    descriptionController.text = previousReminder.description;
   }
 
   @override

@@ -1,11 +1,9 @@
 import 'dart:developer';
 
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
-import 'package:fastlink_reminder/screens/drawer_screen.dart';
-import 'package:fastlink_reminder/main.dart';
 import 'package:fastlink_reminder/screens/deleteAccountScreens/confirm_delete_page.dart';
+import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/utils/loading_dialog.dart';
-import 'package:fastlink_reminder/utils/show_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -47,7 +45,7 @@ class DeleteAccount extends StatelessWidget {
                 children: [
                   OutlinedButton(
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.indigo),
+                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
                     ),
                     onPressed: () {
                       Navigator.pushReplacement(
@@ -64,28 +62,28 @@ class DeleteAccount extends StatelessWidget {
                   ),
                   OutlinedButton(
                     style: ButtonStyle(
-                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
                           side: BorderSide.none,
                           borderRadius:
                               BorderRadius.all(Radius.circular(20.r)))),
-                      backgroundColor: MaterialStateProperty.all(Colors.red),
+                      backgroundColor: WidgetStateProperty.all(Colors.red),
                     ),
                     onPressed: () async {
                       showLoadiongDialog(context);
                       final result =
                           await context.read<AuthProvider>().destroyAccount();
-                          log('current context mounted ${context.mounted}');
-                         if(context.mounted){
-                          Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmDeletePage(
-                            text: result,
+                      log('current context mounted ${context.mounted}');
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ConfirmDeletePage(
+                              text: result,
+                            ),
                           ),
-                        ),
-                      );
-                         }
+                        );
+                      }
                     },
                     child: const Text(
                       'Delete Account',

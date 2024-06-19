@@ -159,12 +159,6 @@ class ReminderScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
-              // for (var schedule in reminder.schedules)
-              //   Text(
-              //     'Schedule  : ${schedule.calculateDate(reminder.triggerAt!)} ',
-              //     style: TextStyle(fontSize: 15.sp),
-              //   ),
             ],
           ),
         ),
