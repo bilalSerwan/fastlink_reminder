@@ -47,11 +47,11 @@ class ReminderScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Positioned(
-                    top: 75.r,
-                    left: 90.r,
+                  Center(
+                    // top: 75.r,
+                    // left: 90.r,
                     child: Container(
-                      padding: EdgeInsets.all(5.r),
+                      padding: EdgeInsets.only(top: 70.r),
                       width: 200.w,
                       height: 100.h,
                       child: Text(

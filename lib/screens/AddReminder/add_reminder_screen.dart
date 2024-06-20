@@ -52,7 +52,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
       schedules.add(Schedule(amount: schedule.amount, unit: schedule.unit));
     }
     triggerAt = previousReminder.triggerAt;
-    titleController.text = previousReminder.title ;
+    titleController.text = previousReminder.title;
     descriptionController.text = previousReminder.description;
   }
 
@@ -269,19 +269,15 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                     schedule.amount = int.parse(schedule.controller.text);
                   }
                 }
-                log('valid data');
                 final newReminder = Reminder(
                     reminderId: previousReminder.reminderId,
                     title: titleController.text,
                     description: descriptionController.text,
                     triggerAt: triggerAt,
                     schedules: schedules);
-                print('newReminder===============>$newReminder');
-                print('previousReminder===============>$previousReminder');
                 if (newReminder != previousReminder ||
                     schedulescheck(
                         newReminder.schedules, previousReminder.schedules)) {
-                  log('add Or Edit reminder ...................');
                   final result = widget.appBarTitle == "Add"
                       ? await context
                           .read<HomeProvider>()

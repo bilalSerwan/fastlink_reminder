@@ -43,7 +43,7 @@ class ReminderServices {
     List<Map<String, dynamic>> schedules = newReminder.schedules
         .map((schedule) => {
               'amount': schedule.amount,
-              'unit': schedule.unit!.toLowerCase(),
+              'unit': schedule.unit.toLowerCase(),
             })
         .toList();
 
@@ -72,7 +72,7 @@ class ReminderServices {
     List<Map<String, dynamic>> schedules = reminder.schedules
         .map((schedule) => {
               'amount': schedule.amount,
-              'unit': schedule.unit!.toLowerCase(),
+              'unit': schedule.unit.toLowerCase(),
             })
         .toList();
 

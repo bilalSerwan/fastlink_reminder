@@ -3,7 +3,6 @@
 import 'package:fastlink_reminder/Provider/auth_provider.dart';
 import 'package:fastlink_reminder/screens/drawer_screen.dart';
 import 'package:fastlink_reminder/screens/Auth/sign_up_screen.dart';
-import 'package:fastlink_reminder/screens/home/home_screen.dart';
 import 'package:fastlink_reminder/utils/colors.dart';
 import 'package:fastlink_reminder/utils/loading_dialog.dart';
 import 'package:fastlink_reminder/utils/show_dialog.dart';
