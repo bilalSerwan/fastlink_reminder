@@ -21,7 +21,6 @@ class AuthServices {
           // Check for the 422 status code
           if (e.response?.statusCode == 422) {
             // Handle the 422 error specifically
-            print('Error 422: ${e.response?.data}');
             errorMessage = e.response?.data['message'];
             // Optionally, you can do more specific handling here
           }
@@ -45,12 +44,16 @@ class AuthServices {
       {required String email,
       required String password,
       required String fcmToken}) async {
-    final response = await dio.post(
-      loginApi,
-      data: {'email': email, 'password': password, 'fcm_token': fcmToken},
-      options: Options(headers: {'Accept': 'application/json'}),
-    );
-    log(' response data =============>   ${response.data}');
+    Response response;
+    try {
+      response = await dio.post(
+        loginApi,
+        data: {'email': email, 'password': password, 'fcm_token': fcmToken},
+        options: Options(headers: {'Accept': 'application/json'}),
+      );
+    } catch (e) {
+      return {'message': errorMessage};
+    }
     return response.data;
   }
 
@@ -71,8 +74,9 @@ class AuthServices {
       return response.data;
     } catch (e) {
       log('error in check token expiered =========>${e.toString()}');
+      return {'message': errorMessage};
     }
-    return null;
+  
   }
 
   /// Sends an email to the specified recipient using the register API endpoint.
@@ -104,8 +108,6 @@ class AuthServices {
       print('catch error');
       return {'message': errorMessage};
     }
-    log('response for send email method =====>>>>>${response.data}');
-
     // Return the decoded JSON response from the server.
     return response.data;
   }
@@ -123,11 +125,15 @@ class AuthServices {
       'Authorization': 'Bearer $authToken',
       'Accept': 'application/json',
     };
-
-    final response = await dio.post(
+    final Response response;
+try{
+     response= await dio.post(
       logOutApi,
       options: Options(headers: headers),
     );
+    } catch (e) {
+      return {'message': 'Error in log out: $e'};
+    }
     log('response for log out method ============>>>> $response');
     return response.data;
   }
@@ -149,10 +155,16 @@ class AuthServices {
       'Authorization': 'Bearer $userToken',
       'Accept': 'application/json'
     };
-    return await dio.post(
+    final Response response;
+    try{
+    response= await dio.post(
       destroyAccountConfirmationApi,
       options: Options(headers: headers),
       data: {'code': confirmCode},
     );
+  }catch(e){
+    return {'message': 'Error in confirm destroy account: $e'};
+  }
+    return response;
   }
 }

@@ -33,6 +33,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
   _AddOrEditReminderScreenState();
   late Reminder previousReminder;
   bool selectExpirationDateHaveError = false;
+  bool isRepeating = false;
   final formkey = GlobalKey<FormState>();
   List<Schedule> schedules = [];
   DateTime? triggerAt;
@@ -45,6 +46,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
       reminderId: widget.reminder.reminderId,
       title: widget.reminder.title,
       description: widget.reminder.description,
+      isRepeatingAnnually: widget.reminder.isRepeatingAnnually,
       triggerAt: widget.reminder.triggerAt,
       schedules: widget.reminder.schedules,
     );
@@ -54,6 +56,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
     triggerAt = previousReminder.triggerAt;
     titleController.text = previousReminder.title;
     descriptionController.text = previousReminder.description;
+    isRepeating = previousReminder.isRepeatingAnnually;
   }
 
   @override
@@ -190,6 +193,26 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                     ),
                   ),
 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 10.w),
+                        child: Text('Repeat annually', style: subtitle),
+                      ),
+                      CupertinoSwitch(
+                        value: isRepeating,
+                        onChanged: (value) {
+                          if (widget.appBarTitle == "Add") {
+                          isRepeating = value;
+                          setState(() {});
+                          } 
+                        },
+                        activeColor: primaryColor,
+                      ),
+                    ],
+                  ),
+
                   //in this section code we have only reminder text and reminder add button to add reminders
                   Padding(
                     padding: EdgeInsets.all(10.0.r),
@@ -257,6 +280,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
             onPressed: () async {
               log('button pressed');
               if (formkey.currentState!.validate()) {
+                log('form is valid');
                 if (triggerAt == null) {
                   selectExpirationDateHaveError = true;
                   setState(() {});
@@ -273,6 +297,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                     reminderId: previousReminder.reminderId,
                     title: titleController.text,
                     description: descriptionController.text,
+                    isRepeatingAnnually: isRepeating,
                     triggerAt: triggerAt,
                     schedules: schedules);
                 if (newReminder != previousReminder ||

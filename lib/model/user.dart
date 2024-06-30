@@ -24,7 +24,7 @@ class UserData {
   String? name;
   String? email;
   String? fcmToken;
-  Null emailVerifiedAt;
+  String? emailVerifiedAt;
   String? createdAt;
   String? updatedAt;
 

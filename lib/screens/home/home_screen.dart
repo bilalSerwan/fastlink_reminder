@@ -65,6 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 reminder: Reminder(
                     reminderId: 0,
                     title: '',
+                    isRepeatingAnnually: false,
                     description: '',
                     triggerAt: DateTime.tryParse(''),
                     schedules: [Schedule(amount: 0, unit: "hour")]),
@@ -110,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: scrollController,
                 itemCount: context.watch<HomeProvider>().remindersList.length,
                 itemBuilder: (context, index) =>
-                    // context.watch<HomeProvider>().paginationLimit >= index?
                     InkWell(
                       onTap: () {
                         Navigator.push(
@@ -161,7 +161,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     )
-                // : const Center(child: CircularProgressIndicator()),
                 ),
       ),
     );

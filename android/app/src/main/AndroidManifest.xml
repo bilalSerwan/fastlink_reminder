@@ -11,7 +11,7 @@
         </intent>
       </queries>
     <application
-        android:label="fastlink_reminder"
+        android:label="Fastlink Reminder"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

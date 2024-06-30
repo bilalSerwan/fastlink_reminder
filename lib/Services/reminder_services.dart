@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fastlink_reminder/links.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
@@ -18,8 +16,7 @@ class ReminderServices {
           options: Options(headers: headers));
       return response.data;
     } catch (e) {
-      log('Error fetching data: $e');
-      return null;
+      return {'message': 'Error fetching reminders: $e'};
     }
   }
 
@@ -46,21 +43,26 @@ class ReminderServices {
               'unit': schedule.unit.toLowerCase(),
             })
         .toList();
-
+    final response;
     // Send the POST request to the add reminder API endpoint.
-    final response = await dio.post(
-      addReminderApi,
-      options: Options(headers: headers),
-      data: {
-        'title': newReminder.title,
-        'description': newReminder.description,
-        'trigger_at': newReminder.triggerAt!.toString(),
-        'schedules': schedules,
-      },
-    );
+    try {
+      response = await dio.post(
+        addReminderApi,
+        options: Options(headers: headers),
+        data: {
+          'title': newReminder.title,
+          'description': newReminder.description,
+          "is_repeating": newReminder.isRepeatingAnnually,
+          'trigger_at': newReminder.triggerAt!.toString(),
+          'schedules': schedules,
+        },
+      );
 
-    // Return the decoded JSON response from the server.
-    return response.data;
+      // Return the decoded JSON response from the server.
+      return response.data;
+    } catch (e) {
+      return {'message': 'Error adding reminder: $e'};
+    }
   }
 
   Future updateReminder(String token, Reminder reminder) async {
@@ -75,18 +77,23 @@ class ReminderServices {
               'unit': schedule.unit.toLowerCase(),
             })
         .toList();
-
-    final response = await dio.post(
-      '$updateReminderAPI/${reminder.reminderId}/update',
-      options: Options(headers: headers),
-      data: {
-        "title": reminder.title,
-        "description": reminder.description,
-        "trigger_at": reminder.triggerAt!.toString(),
-        "schedules": schedules,
-      }, //body
-    ); //post
-    return response.data;
+    final response;
+    try {
+      response = await dio.post(
+        '$updateReminderAPI/${reminder.reminderId}/update',
+        options: Options(headers: headers),
+        data: {
+          "title": reminder.title,
+          "description": reminder.description,
+          "is_repeating": reminder.isRepeatingAnnually,
+          "trigger_at": reminder.triggerAt!.toString(),
+          "schedules": schedules,
+        }, //body
+      ); //post
+      return response.data;
+    } catch (e) {
+      return {'message': 'Error Updating reminder: $e'};
+    }
   }
 
   deleteReminder({required String userToken, required int reminderId}) async {
@@ -95,8 +102,12 @@ class ReminderServices {
       'Content-Type': 'application/json',
     };
     final url = '$deleteReminderApi/$reminderId/delete';
-    print('delete url =======>$url');
-    final response = await dio.post(url, options: Options(headers: headers));
-    return response.data;
+    final response;
+    try {
+      response = await dio.post(url, options: Options(headers: headers));
+      return response.data;
+    } catch (e) {
+      return {'message': 'Error deleteing reminder: $e'};
+    }
   }
 }

@@ -45,9 +45,10 @@ class ReminderCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: Colors.grey.withOpacity(0.4),
-              blurRadius: 5,
-              spreadRadius: 5,
-            )
+              blurRadius: 2,
+              spreadRadius: 3,
+              offset: const Offset(0, 6),
+            ),
           ],
           borderRadius: BorderRadius.all(
             Radius.circular(15.r),
