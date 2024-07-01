@@ -310,8 +310,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                       : await context
                           .read<HomeProvider>()
                           .updateReminder(newReminder);
-                  showAlertDialog(context, result.toString(),
-                      editOrAddReminder: true);
+                  showAlertDialog(context, result.toString(),);
                 }
               }
             },

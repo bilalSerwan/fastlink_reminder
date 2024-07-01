@@ -14,31 +14,36 @@ class HomeProvider extends ChangeNotifier {
   late int lastPagepagination = 1;
   String errorMesssge = "";
 
-  // void changeIsLoading(bool newValue) {
-  //   isLoading = newValue;
-  //   notifyListeners();
-  // }
-
-  Future<void> fetchReminders(bool anotherPage) async {
+  Future<void> fetchMoreData() async {
+    log('fetch more data running');
     if (currentPagePagination > lastPagepagination) return;
-    log('fetch data runnig');
-    if (anotherPage) {
-      currentPagePagination++;
-    } else {
-      remindersList.clear();
-    }
+    currentPagePagination++;
     if (currentPagePagination <= lastPagepagination) {
       final response = await reminderServices.fetchData(userToken,
           pagenationPage: currentPagePagination);
       currentPagePagination = response['reminders']['current_page'];
       lastPagepagination = response['reminders']['last_page'];
-      log('curr_page ==>$currentPagePagination &&&& last_page===>>$lastPagepagination');
       final remindersData = response['reminders']['data'];
       for (var reminder in remindersData) {
         remindersList.add(Reminder.fromJson(reminder));
       }
     }
-    // changeIsLoading(false);
+    notifyListeners();
+  }
+
+  Future<void> fetchReminders(bool anotherPage) async {
+    log('fetch data runnig');
+    remindersList = [];
+    if (currentPagePagination <= lastPagepagination) {
+      final response =
+          await reminderServices.fetchData(userToken, pagenationPage: 1);
+      currentPagePagination = response['reminders']['current_page'];
+      lastPagepagination = response['reminders']['last_page'];
+      final remindersData = response['reminders']['data'];
+      for (var reminder in remindersData) {
+        remindersList.add(Reminder.fromJson(reminder));
+      }
+    }
     notifyListeners();
     return;
   }
@@ -52,16 +57,18 @@ class HomeProvider extends ChangeNotifier {
 
   Future<String> addReminder(Reminder reminder) async {
     log('add reminder method running');
-    log(userToken);
     final result = await reminderServices.addReminder(
         newReminder: reminder, userToken: userToken);
-    print(result);
-
+    log('add reminder data ${result}');
+    remindersList.add(Reminder.fromJson(result['reminder']));
+    notifyListeners();
     return result['message'];
   }
 
   Future<String> updateReminder(Reminder reminder) async {
     final result = await reminderServices.updateReminder(userToken, reminder);
+    remindersList.add(Reminder.fromJson(result['reminder']));
+    notifyListeners();
     return result['message'];
   }
 }

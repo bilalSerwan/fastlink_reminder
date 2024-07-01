@@ -77,7 +77,7 @@ class ReminderServices {
               'unit': schedule.unit.toLowerCase(),
             })
         .toList();
-    final response;
+    final Response response;
     try {
       response = await dio.post(
         '$updateReminderAPI/${reminder.reminderId}/update',
@@ -86,7 +86,7 @@ class ReminderServices {
           "title": reminder.title,
           "description": reminder.description,
           "is_repeating": reminder.isRepeatingAnnually,
-          "trigger_at": reminder.triggerAt!.toString(),
+          // "trigger_at": reminder.triggerAt!.toString(),
           "schedules": schedules,
         }, //body
       ); //post
