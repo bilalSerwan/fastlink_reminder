@@ -76,7 +76,6 @@ class AuthServices {
       log('error in check token expiered =========>${e.toString()}');
       return {'message': errorMessage};
     }
-  
   }
 
   /// Sends an email to the specified recipient using the register API endpoint.
@@ -99,11 +98,12 @@ class AuthServices {
     final Response response;
     try {
       response = await dio.post(
-          'https://d-reminder-api.net-performance.online/api/register',
+          registerApi,
           data: body,
           options: Options(
             headers: {'Accept': 'application/json'},
           ));
+      print(response);
     } catch (e) {
       print('catch error');
       return {'message': errorMessage};
@@ -126,11 +126,11 @@ class AuthServices {
       'Accept': 'application/json',
     };
     final Response response;
-try{
-     response= await dio.post(
-      logOutApi,
-      options: Options(headers: headers),
-    );
+    try {
+      response = await dio.post(
+        logOutApi,
+        options: Options(headers: headers),
+      );
     } catch (e) {
       return {'message': 'Error in log out: $e'};
     }
@@ -156,15 +156,15 @@ try{
       'Accept': 'application/json'
     };
     final Response response;
-    try{
-    response= await dio.post(
-      destroyAccountConfirmationApi,
-      options: Options(headers: headers),
-      data: {'code': confirmCode},
-    );
-  }catch(e){
-    return {'message': 'Error in confirm destroy account: $e'};
-  }
+    try {
+      response = await dio.post(
+        destroyAccountConfirmationApi,
+        options: Options(headers: headers),
+        data: {'code': confirmCode},
+      );
+    } catch (e) {
+      return {'message': 'Error in confirm destroy account: $e'};
+    }
     return response;
   }
 }
