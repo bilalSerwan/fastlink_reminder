@@ -41,15 +41,10 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
   final TextEditingController descriptionController = TextEditingController();
   @override
   void initState() {
+    log(widget.reminder.schedules.toString());
     super.initState();
-    previousReminder = Reminder(
-      reminderId: widget.reminder.reminderId,
-      title: widget.reminder.title,
-      description: widget.reminder.description,
-      isRepeatingAnnually: widget.reminder.isRepeatingAnnually,
-      triggerAt: widget.reminder.triggerAt,
-      schedules: widget.reminder.schedules,
-    );
+    previousReminder = widget.reminder;
+    print(previousReminder.schedules);
     for (var schedule in previousReminder.schedules) {
       schedules.add(Schedule(amount: schedule.amount, unit: schedule.unit));
     }
@@ -204,9 +199,9 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                         value: isRepeating,
                         onChanged: (value) {
                           if (widget.appBarTitle == "Add") {
-                          isRepeating = value;
-                          setState(() {});
-                          } 
+                            isRepeating = value;
+                            setState(() {});
+                          }
                         },
                         activeColor: primaryColor,
                       ),
@@ -250,7 +245,7 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                   ),
 
                   Padding(
-                    padding: EdgeInsets.all(10.h),
+                    padding: EdgeInsets.all(5.h),
                     child: Column(
                       children: [
                         for (int i = 0; i < schedules.length; i++)
@@ -265,60 +260,72 @@ class _AddOrEditReminderScreenState extends State<AddOrEditReminderScreen> {
                       ],
                     ),
                   ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor:
+                                WidgetStateProperty.all(primaryColor)),
+                        onPressed: () async {
+                          log('button pressed');
+                          if (schedules.isEmpty) {
+                            showAlertDialog(
+                              context,
+                              "Please add at least one reminder",
+                            );
+                            return;
+                          }
+                          if (formkey.currentState!.validate()) {
+                            log('form is valid');
+                            if (triggerAt == null) {
+                              selectExpirationDateHaveError = true;
+                              setState(() {});
+                              return;
+                            }
+                            for (var schedule in schedules) {
+                              if (schedule.haveError) {
+                                return;
+                              } else {
+                                schedule.amount =
+                                    int.parse(schedule.controller.text);
+                              }
+                            }
+                            final newReminder = Reminder(
+                                reminderId: previousReminder.reminderId,
+                                title: titleController.text,
+                                description: descriptionController.text,
+                                isRepeatingAnnually: isRepeating,
+                                triggerAt: triggerAt,
+                                schedules: schedules);
+                            log('newReminder=======>>>>${newReminder.schedules}');
+                            if (newReminder != previousReminder ||
+                                schedulescheck(newReminder.schedules,
+                                    previousReminder.schedules)) {
+                              final result = widget.appBarTitle == "Add"
+                                  ? await context
+                                      .read<HomeProvider>()
+                                      .addReminder(newReminder)
+                                  : await context
+                                      .read<HomeProvider>()
+                                      .updateReminder(newReminder);
+                              log(schedules.toString());
+                              showAlertDialog(context, result.toString(),
+                                  editOrAddReminder: true);
+                            }
+                          }
+                        },
+                        child: Text(
+                          widget.appBarTitle == "Add" ? 'Add Reminder' : 'Save',
+                          style: buttonTextStyle.copyWith(
+                            fontSize: 20.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-            ),
-          ),
-        ),
-
-        //Save Button
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(right: 10.w, bottom: 10.h),
-          child: ElevatedButton(
-            style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(primaryColor)),
-            onPressed: () async {
-              log('button pressed');
-              if (formkey.currentState!.validate()) {
-                log('form is valid');
-                if (triggerAt == null) {
-                  selectExpirationDateHaveError = true;
-                  setState(() {});
-                  return;
-                }
-                for (var schedule in schedules) {
-                  if (schedule.haveError) {
-                    return;
-                  } else {
-                    schedule.amount = int.parse(schedule.controller.text);
-                  }
-                }
-                final newReminder = Reminder(
-                    reminderId: previousReminder.reminderId,
-                    title: titleController.text,
-                    description: descriptionController.text,
-                    isRepeatingAnnually: isRepeating,
-                    triggerAt: triggerAt,
-                    schedules: schedules);
-                if (newReminder != previousReminder ||
-                    schedulescheck(
-                        newReminder.schedules, previousReminder.schedules)) {
-                  final result = widget.appBarTitle == "Add"
-                      ? await context
-                          .read<HomeProvider>()
-                          .addReminder(newReminder)
-                      : await context
-                          .read<HomeProvider>()
-                          .updateReminder(newReminder);
-                  showAlertDialog(context, result.toString(),
-                      editOrAddReminder: true);
-                }
-              }
-            },
-            child: Text(
-              'Save',
-              style: buttonTextStyle.copyWith(
-                fontSize: 26.sp,
               ),
             ),
           ),

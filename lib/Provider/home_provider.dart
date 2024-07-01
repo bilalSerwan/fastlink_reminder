@@ -7,20 +7,32 @@ import 'package:flutter/material.dart';
 
 class HomeProvider extends ChangeNotifier {
   final reminderServices = ReminderServices();
-  String userToken = sharedPreferences.getString('user_token')!;
   List<Reminder> remindersList = [];
   final int paginationLimit = 10;
   int currentPagePagination = 1;
   late int lastPagepagination = 1;
   String errorMesssge = "";
 
-  // void changeIsLoading(bool newValue) {
-  //   isLoading = newValue;
-  //   notifyListeners();
-  // }
+  Future<void> fetchAllReminders() async {
+    log('fetchAllData');
+    final userToken2 = sharedPreferences.getString('user_token');
+    final response = await reminderServices.fetchAllData(userToken2!);
+    remindersList.clear();
+    if (response['message'] == null) {
+      final remindersData = response['reminders']['data'];
+      for (var reminder in remindersData) {
+        log('reminder => $reminder');
+        remindersList.add(Reminder.fromJson(reminder));
+      }
+    } else {
+      print('error');
+    }
+    notifyListeners();
+  }
 
   Future<void> fetchReminders(bool anotherPage) async {
-    if (currentPagePagination > lastPagepagination) return;
+      String userToken = sharedPreferences.getString('user_token')!;
+    if ((currentPagePagination > lastPagepagination) && anotherPage) return;
     log('fetch data runnig');
     if (anotherPage) {
       currentPagePagination++;
@@ -28,6 +40,7 @@ class HomeProvider extends ChangeNotifier {
       remindersList.clear();
     }
     if (currentPagePagination <= lastPagepagination) {
+      log('fetch data in provider is  runnig');
       final response = await reminderServices.fetchData(userToken,
           pagenationPage: currentPagePagination);
       currentPagePagination = response['reminders']['current_page'];
@@ -37,30 +50,30 @@ class HomeProvider extends ChangeNotifier {
       for (var reminder in remindersData) {
         remindersList.add(Reminder.fromJson(reminder));
       }
+      notifyListeners();
     }
-    // changeIsLoading(false);
     notifyListeners();
     return;
   }
 
   Future<String> deleteReminder(Reminder reminder) async {
+      String userToken = sharedPreferences.getString('user_token')!;
     log('delete reminder ==============================>');
     final result = await reminderServices.deleteReminder(
         reminderId: reminder.reminderId, userToken: userToken);
+    notifyListeners();
     return result['message'];
   }
 
   Future<String> addReminder(Reminder reminder) async {
-    log('add reminder method running');
-    log(userToken);
+      String userToken = sharedPreferences.getString('user_token')!;
     final result = await reminderServices.addReminder(
         newReminder: reminder, userToken: userToken);
-    print(result);
-
     return result['message'];
   }
 
   Future<String> updateReminder(Reminder reminder) async {
+      String userToken = sharedPreferences.getString('user_token')!;
     final result = await reminderServices.updateReminder(userToken, reminder);
     return result['message'];
   }

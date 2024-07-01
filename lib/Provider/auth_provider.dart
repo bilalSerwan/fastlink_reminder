@@ -53,8 +53,9 @@ class AuthProvider extends ChangeNotifier {
       print(user.userData);
       print(
           'fcmToken in shared prefrences =========${sharedPreferences.getString("fcmToken")}');
+      sharedPreferences.setString("user_token", user.accessToken!);
       if (keepMeSignInButton) {
-        sharedPreferences.setString("user_token", user.accessToken!);
+        sharedPreferences.setString("isLogin", "login");
         print(
             'user token in shared prefrences =========${sharedPreferences.getString("user_token")}');
       }
@@ -113,6 +114,7 @@ class AuthProvider extends ChangeNotifier {
     final result = await authService.logOut(userToken);
     print(result);
     print(await sharedPreferences.clear());
+    sharedPreferences.clear();
     log('log out muthod runned ............................');
   }
 

@@ -37,7 +37,6 @@ class Reminder extends Equatable {
   }
 
   factory Reminder.fromJson(Map<String, dynamic> json) {
-    print(json);
     return Reminder(
       reminderId: json['id'],
       title: json["title"],

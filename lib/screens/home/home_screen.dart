@@ -23,12 +23,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isLoading = false;
+  bool isLoading = true;
   final scrollController = ScrollController();
   @override
   void initState() {
+    log('init state running');
     super.initState();
-    fetchData(false);
+    fetchData();
     scrollController.addListener(_scrollListener);
   }
 
@@ -36,14 +37,22 @@ class _HomeScreenState extends State<HomeScreen> {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
       log('load more data');
-      fetchData(true);
+      fetchMoreData(true);
     }
   }
 
-  void fetchData(bool value) async {
+  void fetchData()async {
+    await context.read<HomeProvider>().fetchAllReminders();
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  void fetchMoreData(bool value) async {
     setState(() {
       isLoading = true;
     });
+
     await context.read<HomeProvider>().fetchReminders(value);
     setState(() {
       isLoading = false;
@@ -65,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 reminder: Reminder(
                     reminderId: 0,
                     title: '',
-                    isRepeatingAnnually: false,
+                    isRepeatingAnnually: true,
                     description: '',
                     triggerAt: DateTime.tryParse(''),
                     schedules: [Schedule(amount: 0, unit: "hour")]),
@@ -110,13 +119,38 @@ class _HomeScreenState extends State<HomeScreen> {
             : ListView.builder(
                 controller: scrollController,
                 itemCount: context.watch<HomeProvider>().remindersList.length,
-                itemBuilder: (context, index) =>
-                    InkWell(
-                      onTap: () {
+                itemBuilder: (context, index) {
+                  final reminder =
+                      context.watch<HomeProvider>().remindersList[index];
+                  return InkWell(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReminderScreen(
+                            reminder: context
+                                .watch<HomeProvider>()
+                                .remindersList[index],
+                          ),
+                        ),
+                      );
+                    },
+                    child: ReminderCard(
+                      deleteButtonPressed: () async {
+                        isLoading = true;
+                        setState(() {});
+                        final result = await context
+                            .read<HomeProvider>()
+                            .deleteReminder(reminder);
+                        showAlertDialog(navigatorKey.currentContext!, result,
+                            editOrAddReminder: true);
+                      },
+                      editButtonPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ReminderScreen(
+                            builder: (context) => AddOrEditReminderScreen(
+                              appBarTitle: 'Edit',
                               reminder: context
                                   .watch<HomeProvider>()
                                   .remindersList[index],
@@ -124,44 +158,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       },
-                      child: ReminderCard(
-                        deleteButtonPressed: () async {
-                          isLoading = true;
-                          setState(() {});
-                          showAlertDialog(
-                              navigatorKey.currentContext!,
-                              await context.read<HomeProvider>().deleteReminder(
-                                  context
-                                      .watch<HomeProvider>()
-                                      .remindersList[index]),
-                              editOrAddReminder: true);
-                        },
-                        editButtonPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => AddOrEditReminderScreen(
-                                appBarTitle: 'Edit',
-                                reminder: context
-                                    .watch<HomeProvider>()
-                                    .remindersList[index],
-                              ),
-                            ),
-                          );
-                        },
-                        reminderTitle: context
+                      reminderTitle: context
+                          .watch<HomeProvider>()
+                          .remindersList[index]
+                          .title,
+                      expirationDate: DateFormat.yMMMd().format(
+                        context
                             .watch<HomeProvider>()
                             .remindersList[index]
-                            .title,
-                        expirationDate: DateFormat.yMMMd().format(
-                          context
-                              .watch<HomeProvider>()
-                              .remindersList[index]
-                              .triggerAt!,
-                        ),
+                            .triggerAt!,
                       ),
-                    )
-                ),
+                    ),
+                  );
+                }),
       ),
     );
   }

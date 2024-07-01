@@ -1,19 +1,37 @@
 import 'package:dio/dio.dart';
 import 'package:fastlink_reminder/links.dart';
 import 'package:fastlink_reminder/model/reminder.dart';
+import 'dart:developer';
 
 class ReminderServices {
   final dio = Dio();
-  Future fetchData(String userToken, {required int pagenationPage}) async {
+
+  fetchAllData(String userToken) async {
     final headers = {
       'Authorization': 'Bearer $userToken',
       'Accept': 'application/json',
     };
+    try {
+      final response = await dio.get(fetchAllRemindersApi,
+          options: Options(headers: headers));
+      return response.data;
+    } catch (e) {
+      return {'message': 'Error fetching reminders: $e'};
+    }
+  }
 
+  Future fetchData(String userToken, {required int pagenationPage}) async {
+    log('fetch data in service is  runnig');
+    final headers = {
+      'Authorization': 'Bearer $userToken',
+      'Accept': 'application/json',
+    };
+    log('before try ');
     try {
       final response = await dio.get(
           '$fetchAllRemindersApi?page=$pagenationPage',
           options: Options(headers: headers));
+      log('after fetching');
       return response.data;
     } catch (e) {
       return {'message': 'Error fetching reminders: $e'};
@@ -77,7 +95,7 @@ class ReminderServices {
               'unit': schedule.unit.toLowerCase(),
             })
         .toList();
-    final response;
+    final Response response;
     try {
       response = await dio.post(
         '$updateReminderAPI/${reminder.reminderId}/update',
@@ -102,12 +120,12 @@ class ReminderServices {
       'Content-Type': 'application/json',
     };
     final url = '$deleteReminderApi/$reminderId/delete';
-    final response;
+    final Response response;
     try {
       response = await dio.post(url, options: Options(headers: headers));
       return response.data;
     } catch (e) {
-      return {'message': 'Error deleteing reminder: $e'};
+      return {'message': 'Error in deleteing reminder: $e'};
     }
   }
 }
